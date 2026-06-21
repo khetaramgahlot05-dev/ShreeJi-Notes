@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="pageTitle">Product — ShreeJi Notes</title>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="index.html" class="brand">
+      <div class="brand-mark">SJ</div>
+      <div class="brand-text">
+        <span class="b1">ShreeJi</span>
+        <span class="b2">Notes</span>
+      </div>
+    </a>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">☰</button>
+    <nav class="main-nav" id="mainNav">
+      <a href="index.html">Home</a>
+      <a href="store.html" class="active">Notes Store</a>
+      <a href="about.html">About Us</a>
+      <a href="contact.html">Contact</a>
+      <a href="faq.html">FAQ</a>
+    </nav>
+  </div>
+</header>
+
+<section class="section">
+  <div class="container" id="productRoot">
+    <p class="muted">Loading…</p>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="brand-text" style="margin-bottom:10px;">
+          <span class="b1" style="color:var(--gold-light);">ShreeJi Notes</span>
+        </div>
+        <p style="font-size:0.85rem;color:#C9B68F;max-width:280px;">Exam-focused PDF study notes for B.Sc. B.Ed. students, built around the MLSU syllabus.</p>
+      </div>
+      <div>
+        <h4>Shop</h4>
+        <a href="store.html">Notes Store</a>
+        <a href="about.html">About Us</a>
+        <a href="contact.html">Contact</a>
+      </div>
+      <div>
+        <h4>Support</h4>
+        <a href="faq.html">FAQ</a>
+        <a href="delivery-info.html">Delivery Info</a>
+        <a href="refund-policy.html">Refund Policy</a>
+      </div>
+      <div>
+        <h4>Legal</h4>
+        <a href="terms.html">Terms &amp; Conditions</a>
+        <a href="privacy-policy.html">Privacy Policy</a>
+        <a href="disclaimer.html">Disclaimer</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span id="year"></span> ShreeJi Notes. All rights reserved.</span>
+      <span>Made for MLSU students, with care.</span>
+    </div>
+  </div>
+</footer>
+
+<script type="module">
+  import { initMobileNav, fetchProductById, formatINR, escapeHTML } from "./assets/js/main.js";
+  import { initCheckoutModal } from "./assets/js/cart.js";
+
+  initMobileNav();
+  initCheckoutModal();
+  document.getElementById("year").textContent = new Date().getFullYear();
+
+  const root = document.getElementById("productRoot");
+  const params = new URLSearchParams(location.search);
+  const id = params.get("id");
+
+  (async () => {
+    if(!id){ root.innerHTML = `<p class="muted">No product specified.</p>`; return; }
+    const p = await fetchProductById(id);
+    if(!p){ root.innerHTML = `<p class="muted">This product could not be found.</p><a class="btn btn-outline" href="store.html">Back to Notes Store</a>`; return; }
+
+    document.getElementById("pageTitle").textContent = p.title + " — ShreeJi Notes";
+
+    const images = (p.images && p.images.length) ? p.images : [];
+    const highlights = (p.highlights && p.highlights.length) ? p.highlights : [
+      "Unit-wise organized notes",
+      "Focused on exam preparation",
+      "Well-structured & easy to understand",
+      "Instant access after purchase",
+      "Prepared for better academic performance"
+    ];
+    const off = (p.mrp && p.price) ? Math.round(100 - (p.price / p.mrp) * 100) : null;
+
+    root.innerHTML = `
+      <div class="product-grid">
+        <div>
+          <div class="gallery-main">
+            ${images[0] ? `<img id="mainImg" src="${images[0]}" alt="${escapeHTML(p.title)}">`
+                        : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--ink-soft);">No image yet</div>`}
+          </div>
+          ${images.length > 1 ? `<div class="gallery-thumbs" id="thumbs">
+            ${images.map((img,i) => `<button class="thumb-btn ${i===0?'active':''}" data-img="${img}"><img src="${img}" alt="thumbnail ${i+1}"></button>`).join("")}
+          </div>` : ``}
+        </div>
+        <div>
+          ${p.featured ? `<span class="badge-bestseller">#1 Best Seller</span>` : ``}
+          <h1 style="font-size:clamp(1.5rem,2.6vw,1.9rem);">${escapeHTML(p.title)}</h1>
+          <p class="muted" style="margin-top:-6px;">${escapeHTML(p.category || "")}</p>
+          ${p.rating ? `<span class="rating-pill">${p.rating}★</span> <span class="muted" style="font-size:0.85rem;">(${p.reviewCount || 0})</span>` : ``}
+          <div class="price-block">
+            ${off ? `<span class="off">↓${off}%</span>` : ``}
+            ${p.mrp ? `<span class="mrp">${formatINR(p.mrp)}</span>` : ``}
+            <span class="now">${formatINR(p.price)}</span>
+          </div>
+          <p class="limited-offer">Limited Time Offer</p>
+          <div class="buy-actions">
+            <button class="btn btn-outline" data-buy="${p.id}">Add to Cart</button>
+            <button class="btn btn-gold" data-buy="${p.id}">Buy at ${formatINR(p.price)}</button>
+          </div>
+          <h3 style="font-size:1.05rem;">Highlight</h3>
+          <ul class="highlight-list">${highlights.map(h => `<li>${escapeHTML(h)}</li>`).join("")}</ul>
+          ${p.description ? `<div class="prose" style="margin-top:20px;"><h3 style="font-size:1.05rem;">Description</h3><p>${escapeHTML(p.description)}</p></div>` : ``}
+          <div class="trust-row">
+            <span class="t-item">⚡ Instant access after payment confirmation</span>
+            <span class="t-item">🔒 Secure UPI payment</span>
+            <span class="t-item">📱 Works on mobile, tablet &amp; desktop</span>
+          </div>
+        </div>
+      </div>`;
+
+    document.getElementById("thumbs")?.addEventListener("click", (e) => {
+      const btn = e.target.closest(".thumb-btn");
+      if(!btn) return;
+      document.getElementById("mainImg").src = btn.dataset.img;
+      document.querySelectorAll(".thumb-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+    });
+  })();
+</script>
+</body>
+</html>
