@@ -8,10 +8,10 @@
   <style>
     :root {
       --maroon: #008060;
-      --maroon-dark: #004c3f;
+      --maroon-dark: #006e52;
       --gold: #C9A227;
       --magenta: #E01BB5;
-      --parchment: #F9F5EE;
+      --parchment: #f6f6f7;
       --cream: #F2EDE4;
       --text: #2C1810;
       --text-light: #6B5E56;
@@ -346,9 +346,7 @@
           <div class="section-title">⏳ Pending Verifications</div>
           <button class="btn btn-gold btn-sm" onclick="showPage('payments', document.querySelector('[onclick=\"showPage(\'payments\', this)\"]'))">View All</button>
         </div>
-        <div style="display:flex;gap:12px;margin-bottom:16px">
-<input id="searchProduct" placeholder="Search products..." style="padding:10px 14px;border:1px solid #ddd;border-radius:8px;width:300px">
-</div><div class="table-card">
+        <div class="table-card">
           <div class="table-wrap">
             <table>
               <thead>
@@ -938,17 +936,7 @@
     setTimeout(() => t.className = '', 3000);
   };
 
-  
-document.addEventListener('input',e=>{
- if(e.target.id==='searchProduct'){
- const k=e.target.value.toLowerCase();
- document.querySelectorAll('#productsBody tr').forEach(r=>{
-  r.style.display=r.innerText.toLowerCase().includes(k)?'':'none';
- });
- }
-});
-
-// Close modal on overlay click
+  // Close modal on overlay click
   document.querySelectorAll('.modal-overlay').forEach(el => {
     el.addEventListener('click', e => { if (e.target === el) el.classList.remove('open'); });
   });
