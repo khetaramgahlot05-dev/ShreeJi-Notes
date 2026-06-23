@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - ShreeJi Notes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+
+        /* ===== LOGIN PAGE ===== */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-box h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            color: #667eea;
+            font-size: 28px;
+        }
+
+        .login-box p {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            background-color: #f9f9f9;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        /* ===== ADMIN DASHBOARD ===== */
+        .admin-container {
+            display: none;
+            background-color: #f5f7fa;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px 0;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            padding: 0 20px;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .sidebar-header h2 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .sidebar-header p {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 5px;
+        }
+
+        .sidebar-nav a {
+            display: block;
+            padding: 15px 20px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+            border-left: 4px solid transparent;
+        }
+
+        .sidebar-nav a:hover,
+        .sidebar-nav a.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-left-color: white;
+            padding-left: 25px;
+        }
+
+        .sidebar-nav a i {
+            margin-right: 12px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 30px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            background: white;
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .header h1 {
+            font-size: 28px;
+            color: #333;
+        }
+
+        .logout-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #c0392b;
+        }
+
+        /* ===== SECTIONS ===== */
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* ===== DASHBOARD ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card .icon {
+            font-size: 32px;
+            margin-bottom: 15px;
+        }
+
+        .stat-card .value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-card .label {
+            font-size: 14px;
+            color: #999;
+        }
+
+        /* ===== PRODUCTS SECTION ===== */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background: #5568d3;
+        }
+
+        .btn.secondary {
+            background: #95a5a6;
+        }
+
+        .btn.secondary:hover {
+            background: #7f8c8d;
+        }
+
+        .btn.danger {
+            background: #e74c3c;
+        }
+
+        .btn.danger:hover {
+            background: #c0392b;
+        }
+
+        .btn.success {
+            background: #27ae60;
+        }
+
+        .btn.success:hover {
+            background: #229954;
+        }
+
+        /* ===== MODAL ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-content h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .modal-content .close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 28px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .modal-content .close:hover {
+            color: #333;
+        }
+
+        /* ===== FORM ===== */
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-row.full {
+            grid-template-columns: 1fr;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .image-preview {
+            width: 100px;
+            height: 100px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            margin-top: 10px;
+            object-fit: cover;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+            justify-content: flex-end;
+        }
+
+        /* ===== TABLES ===== */
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table thead {
+            background-color: #f8f9fa;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        table td {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        table tbody tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-buttons button {
+            padding: 6px 12px;
+            font-size: 12px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .edit-btn {
+            background: #3498db;
+            color: white;
+        }
+
+        .edit-btn:hover {
+            background: #2980b9;
+        }
+
+        .delete-btn {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background: #c0392b;
+        }
+
+        /* ===== EMPTY STATE ===== */
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: #999;
+        }
+
+        .empty-state p {
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+
+        /* ===== TABS ===== */
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #e0e0e0;
+            margin-bottom: 20px;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .tab:hover {
+            color: #667eea;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* ===== STATUS BADGE ===== */
+        .badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge.success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .badge.pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .badge.danger {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+            }
+
+            .main-content {
+                margin-left: 200px;
+                padding: 15px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            table td, table th {
+                padding: 10px 5px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .sidebar {
+                width: 100%;
+                position: relative;
+                height: auto;
+                padding: 15px;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 15px;
+            }
+
+            .sidebar-nav a {
+                display: inline-block;
+                margin-right: 10px;
+                padding: 8px 12px;
+            }
+        }
+
+        /* ===== LOADING ===== */
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #667eea;
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #e0e0e0;
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ===== SUCCESS MESSAGE ===== */
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* QR Code Upload Preview */
+        .qr-preview {
+            width: 150px;
+            height: 150px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            margin-top: 10px;
+            object-fit: contain;
+            background: #f9f9f9;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- LOGIN PAGE -->
+    <div id="loginPage" class="login-container">
+        <div class="login-box">
+            <h1>🏪 ShreeJi Notes</h1>
+            <p>Admin Panel</p>
+            <div id="loginError" class="error-message"></div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" placeholder="admin@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="Enter password" required>
+                </div>
+                <button type="submit" class="login-btn">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ADMIN DASHBOARD -->
+    <div id="adminContainer" class="admin-container">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>ShreeJi</h2>
+                <p>Admin Panel</p>
+            </div>
+            <ul class="sidebar-nav">
+                <li><a href="#" onclick="showSection('dashboard')" class="nav-link active">📊 Dashboard</a></li>
+                <li><a href="#" onclick="showSection('products')" class="nav-link">📦 Products</a></li>
+                <li><a href="#" onclick="showSection('orders')" class="nav-link">📋 Orders</a></li>
+                <li><a href="#" onclick="showSection('payments')" class="nav-link">💳 Payments</a></li>
+                <li><a href="#" onclick="showSection('pages')" class="nav-link">📄 Pages</a></li>
+                <li><a href="#" onclick="logout()" class="nav-link">🚪 Logout</a></li>
+            </ul>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <!-- HEADER -->
+            <div class="header">
+                <h1 id="sectionTitle">Dashboard</h1>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </div>
+
+            <div id="successMessage" class="success-message"></div>
+
+            <!-- DASHBOARD SECTION -->
+            <section id="dashboard" class="section active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="icon">📦</div>
+                        <div class="value" id="totalProducts">0</div>
+                        <div class="label">Total Products</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="icon">📋</div>
+                        <div class="value" id="totalOrders">0</div>
+                        <div class="label">Total Orders</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="icon">💰</div>
+                        <div class="value" id="totalRevenue">₹0</div>
+                        <div class="label">Total Revenue</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="icon">✅</div>
+                        <div class="value" id="completedOrders">0</div>
+                        <div class="label">Completed Orders</div>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <h3 style="padding: 20px 20px 0; color: #333;">Recent Orders</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentOrdersBody">
+                            <tr>
+                                <td colspan="5" class="empty-state">No orders yet</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- PRODUCTS SECTION -->
+            <section id="products" class="section">
+                <div class="section-header">
+                    <h2>Products Management</h2>
+                    <button class="btn" onclick="openProductModal()">+ Add Product</button>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Name</th>
+                                <th>Price</th>
+                                <th>Stock</th>
+                                <th>Category</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productsBody">
+                            <tr>
+                                <td colspan="6" class="empty-state">No products added yet</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ORDERS SECTION -->
+            <section id="orders" class="section">
+                <div class="section-header">
+                    <h2>Orders Management</h2>
+                </div>
+
+                <div class="tabs">
+                    <div class="tab active" onclick="showOrderTab('all')">All Orders</div>
+                    <div class="tab" onclick="showOrderTab('pending')">Pending</div>
+                    <div class="tab" onclick="showOrderTab('verified')">Verified</div>
+                    <div class="tab" onclick="showOrderTab('completed')">Completed</div>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Amount</th>
+                                <th>Items</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersBody">
+                            <tr>
+                                <td colspan="7" class="empty-state">No orders found</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- PAYMENTS SECTION -->
+            <section id="payments" class="section">
+                <div class="section-header">
+                    <h2>Payment Settings</h2>
+                    <button class="btn" onclick="openQRModal()">📱 Update QR Code</button>
+                </div>
+
+                <div style="background: white; padding: 30px; border-radius: 10px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start;">
+                        <div>
+                            <h3 style="margin-bottom: 20px; color: #333;">Payment Methods</h3>
+                            <div style="margin-bottom: 20px;">
+                                <p style="font-weight: 600; margin-bottom: 10px;">UPI QR Code</p>
+                                <p style="color: #666; font-size: 14px; margin-bottom: 15px;">Upload or view your UPI QR code for customer payments</p>
+                                <img id="qrCodePreview" class="qr-preview" src="" alt="QR Code" style="display: none;">
+                                <p id="noQRMessage" style="color: #999; font-size: 14px;">No QR code uploaded yet</p>
+                            </div>
+                            <button class="btn" onclick="openQRModal()">Upload QR Code</button>
+                        </div>
+                        <div>
+                            <h3 style="margin-bottom: 20px; color: #333;">Payment Statistics</h3>
+                            <div style="padding: 20px; background: #f9f9f9; border-radius: 5px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                                    <span style="color: #666;">Total Payments Received</span>
+                                    <span style="font-weight: 600; color: #27ae60;" id="totalPayments">₹0</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span style="color: #666;">Pending Verification</span>
+                                    <span style="font-weight: 600; color: #f39c12;" id="pendingPayments">₹0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PAGES SECTION -->
+            <section id="pages" class="section">
+                <div class="section-header">
+                    <h2>Page Content Editor</h2>
+                </div>
+
+                <div class="tabs">
+                    <div class="tab active" onclick="showPageTab('home')">Home</div>
+                    <div class="tab" onclick="showPageTab('about')">About</div>
+                    <div class="tab" onclick="showPageTab('products')">Products</div>
+                    <div class="tab" onclick="showPageTab('contact')">Contact</div>
+                    <div class="tab" onclick="showPageTab('terms')">Terms</div>
+                    <div class="tab" onclick="showPageTab('privacy')">Privacy</div>
+                    <div class="tab" onclick="showPageTab('faq')">FAQ</div>
+                </div>
+
+                <div id="homeTabContent" class="tab-content active" style="background: white; padding: 20px; border-radius: 10px;">
+                    <h3 style="margin-bottom: 20px;">Home Page Content</h3>
+                    <div class="form-group">
+                        <label>Hero Title</label>
+                        <input type="text" id="heroTitle" placeholder="Enter hero title">
+                    </div>
+                    <div class="form-group">
+                        <label>Hero Subtitle</label>
+                        <textarea id="heroSubtitle" placeholder="Enter hero subtitle"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Featured Products Text</label>
+                        <textarea id="featuredText" placeholder="Enter featured products description"></textarea>
+                    </div>
+                    <button class="btn success" onclick="savePageContent('home')">Save Changes</button>
+                </div>
+
+                <div id="aboutTabContent" class="tab-content" style="background: white; padding: 20px; border-radius: 10px;">
+                    <h3 style="margin-bottom: 20px;">About Page Content</h3>
+                    <div class="form-group">
+                        <label>About Title</label>
+                        <input type="text" id="aboutTitle" placeholder="Enter about title">
+                    </div>
+                    <div class="form-group">
+                        <label>About Description</label>
+                        <textarea id="aboutDesc" placeholder="Enter about description"></textarea>
+                    </div>
+                    <button class="btn success" onclick="savePageContent('about')">Save Changes</button>
+                </div>
+
+                <div id="productsTabContent" class="tab-content" style="background: white; padding: 20px; border-radius: 10px;">
+                    <h3 style="margin-bottom: 20px;">Products Page Content</h3>
+                    <div class="form-group">
+                        <label>Page Title</label>
+                        <input type="text" id="productsPageTitle" placeholder="Enter products page title">
+                    </div>
+                    <div class="form-group">
+                        <label>Page Description</label>
+                        <textarea id="productsPageDesc" placeholder="Enter products page description"></textarea>
+                    </div>
+                    <button class="btn success" onclick="savePageContent('products')">Save Changes</button>
+                </div>
+
+                <div id="contactTabContent" class="tab-content" style="background: white; padding: 20px; border-radius: 10px;">
+                    <h3 style="margin-bottom: 20px;">Contact Page Content</h3>
+                    <div class="form-group">
+                        <label>Contact Email</label>
+                        <input type="email" id="contactEmail" placeholder="contact@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Contact Phone</label>
+                        <input type="tel" id="contactPhone" placeholder="+91 XXXXX XXXXX">
+                    </div>
+                    <div class="form-group">
+                        <label>Contact Address</label>
+                        <textarea id="contactAddress" placeholder="Enter address"></textarea>
+                    </div>
+                    <button class="btn success" onclick="savePageContent('contact')">Save Changes</button>
+                </div>
+
+                <div id="termsTabContent" class="tab-content" style="background: white; padding: 20px; border-radius: 10px;">
+                    <h3 style="margin-bottom: 20px;">Terms & Conditions</h3>
+                    <div class="form-group">
+                        <label>Terms Content</label>
+                        <textarea id="termsContent" placeholder="Enter terms and conditions" style="min-height: 300px;"></textarea>
+                    </div>
+                    <button class="btn success" onclick="savePageContent('terms')">Save Changes</button>
+                </div>
+
+                <div id="privacyTabContent" class="tab-content" style="background: white; padding: 20px; border-radius: 10px;">
+                    <h3 style="margin-bottom: 20px;">Privacy Policy</h3>
+                    <div class="form-group">
+                        <label>Privacy Content</label>
+                        <textarea id="privacyContent" placeholder="Enter privacy policy" style="min-height: 300px;"></textarea>
+                    </div>
+                    <button class="btn success" onclick="savePageContent('privacy')">Save Changes</button>
+                </div>
+
+                <div id="faqTabContent" class="tab-content" style="background: white; padding: 20px; border-radius: 10px;">
+                    <h3 style="margin-bottom: 20px;">FAQ Section</h3>
+                    <div id="faqList" style="margin-bottom: 20px;"></div>
+                    <button class="btn" onclick="addFAQ()">+ Add FAQ</button>
+                    <button class="btn success" onclick="saveFAQ()" style="margin-top: 20px;">Save FAQ</button>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- MODALS -->
+
+    <!-- Product Modal -->
+    <div id="productModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('productModal')">&times;</span>
+            <h2 id="productModalTitle">Add Product</h2>
+            <div class="form-row full">
+                <div class="form-group">
+                    <label>Product Name</label>
+                    <input type="text" id="productName" placeholder="Enter product name">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Price (₹)</label>
+                    <input type="number" id="productPrice" placeholder="0.00" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>Stock</label>
+                    <input type="number" id="productStock" placeholder="0">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Category</label>
+                    <select id="productCategory">
+                        <option value="">Select Category</option>
+                        <option value="notes">Notes</option>
+                        <option value="books">Books</option>
+                        <option value="stationery">Stationery</option>
+                        <option value="guides">Study Guides</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>SKU</label>
+                    <input type="text" id="productSKU" placeholder="SKU123">
+                </div>
+            </div>
+            <div class="form-row full">
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="productDesc" placeholder="Enter product description"></textarea>
+                </div>
+            </div>
+            <div class="form-row full">
+                <div class="form-group">
+                    <label>Product Image</label>
+                    <input type="file" id="productImage" accept="image/*">
+                    <img id="productImagePreview" class="image-preview" style="display: none;">
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn secondary" onclick="closeModal('productModal')">Cancel</button>
+                <button class="btn" onclick="saveProduct()">Save Product</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- QR Code Modal -->
+    <div id="qrModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('qrModal')">&times;</span>
+            <h2>Update Payment QR Code</h2>
+            <div class="form-group">
+                <label>Upload UPI QR Code</label>
+                <input type="file" id="qrUpload" accept="image/*">
+                <img id="qrUploadPreview" class="qr-preview" style="display: none;">
+            </div>
+            <p style="color: #666; font-size: 14px; margin: 15px 0;">
+                This QR code will be displayed on your store for customers to make payments via UPI.
+            </p>
+            <div class="modal-buttons">
+                <button class="btn secondary" onclick="closeModal('qrModal')">Cancel</button>
+                <button class="btn success" onclick="saveQRCode()">Save QR Code</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Details Modal -->
+    <div id="orderModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('orderModal')">&times;</span>
+            <h2>Order Details</h2>
+            <div id="orderDetails"></div>
+            <div class="modal-buttons">
+                <button class="btn secondary" onclick="closeModal('orderModal')">Close</button>
+                <button class="btn" id="verifyBtn" onclick="verifyPayment()" style="display: none;">Verify Payment</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-storage.js"></script>
+    <script src="admin-config.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>
