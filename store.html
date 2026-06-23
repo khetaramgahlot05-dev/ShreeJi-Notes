@@ -1,126 +1,325 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Notes Store — ShreeJi Notes</title>
-<meta name="description" content="Browse all B.Sc. B.Ed. PDF study notes — Zoology, Botany, Chemistry and more, based on the MLSU syllabus.">
-<link rel="stylesheet" href="assets/css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notes Store - ShreeJi Notes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./assets/css/style.css">
+  <style>
+    .store-header {
+      padding: 48px 24px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      border-bottom: 2px dashed var(--accent);
+    }
+
+    .store-header h1 {
+      color: white;
+      font-size: 2.5rem;
+      margin-bottom: 8px;
+    }
+
+    .store-controls {
+      background: white;
+      padding: 24px;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 70px;
+      z-index: 100;
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      flex-wrap: wrap;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 200px;
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+
+    .search-box input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .filters {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 8px 16px;
+      background: var(--bg-secondary);
+      border: 2px solid var(--border);
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: var(--transition);
+    }
+
+    .filter-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--primary);
+    }
+
+    .filter-btn:hover {
+      border-color: var(--accent);
+    }
+
+    .sort-select {
+      padding: 8px 16px;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      background: white;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .store-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 48px 24px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 80px 24px;
+    }
+
+    .empty-state-icon {
+      font-size: 4rem;
+      margin-bottom: 24px;
+    }
+
+    .empty-state h2 {
+      font-size: 2rem;
+      margin-bottom: 12px;
+    }
+
+    .empty-state p {
+      color: var(--text-soft);
+      font-size: 1.1rem;
+    }
+  </style>
 </head>
 <body>
-
-<header class="site-header">
-  <div class="header-inner">
-    <a href="index.html" class="brand">
-      <div class="brand-mark">SJ</div>
-      <div class="brand-text">
-        <span class="b1">ShreeJi</span>
-        <span class="b2">Notes</span>
-      </div>
-    </a>
-    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">☰</button>
-    <nav class="main-nav" id="mainNav">
-      <a href="index.html">Home</a>
-      <a href="store.html" class="active">Notes Store</a>
-      <a href="about.html">About Us</a>
-      <a href="contact.html">Contact</a>
-      <a href="faq.html">FAQ</a>
-    </nav>
-  </div>
-</header>
-
-<section class="section-tight" style="padding-bottom:0;">
-  <div class="container">
-    <span class="eyebrow">All Notes</span>
-    <h1 style="font-size:clamp(1.8rem,3.6vw,2.6rem);">Notes Store</h1>
-    <p class="muted" style="max-width:560px;">Unit-wise, exam-focused PDF notes — pick your subject below.</p>
-  </div>
-</section>
-
-<section class="section section-tight">
-  <div class="container">
-    <div class="chip-row" id="filterChips" style="margin-bottom:34px;">
-      <button class="chip filter-chip active" data-filter="all" type="button">All</button>
-      <button class="chip filter-chip" data-filter="Zoology" type="button">Zoology</button>
-      <button class="chip filter-chip" data-filter="Botany" type="button">Botany</button>
-      <button class="chip filter-chip" data-filter="Chemistry" type="button">Chemistry</button>
-    </div>
-    <div class="grid grid-4" id="storeGrid">
-      <p class="muted">Loading notes…</p>
-    </div>
-  </div>
-</section>
-
-<footer class="site-footer">
-  <div class="container">
-    <div class="footer-grid">
-      <div>
-        <div class="brand-text" style="margin-bottom:10px;">
-          <span class="b1" style="color:var(--gold-light);">ShreeJi Notes</span>
+  <!-- Header -->
+  <header>
+    <div class="header-content">
+      <a href="./" class="logo">
+        <div class="logo-icon">📚</div>
+        <div class="logo-text">
+          <strong>ShreeJi</strong>
+          <small>NOTES</small>
         </div>
-        <p style="font-size:0.85rem;color:#C9B68F;max-width:280px;">Exam-focused PDF study notes for B.Sc. B.Ed. students, built around the MLSU syllabus.</p>
+      </a>
+      <nav>
+        <ul>
+          <li><a href="./">Home</a></li>
+          <li><a href="./store.html" class="active">Store</a></li>
+          <li><a href="./about.html">About</a></li>
+          <li><a href="./faq.html">FAQ</a></li>
+          <li><a href="./contact.html">Contact</a></li>
+        </ul>
+      </nav>
+      <div class="header-actions">
+        <div class="cart-badge">🛒<span class="cart-count">0</span></div>
+        <button class="mobile-menu-btn">☰</button>
       </div>
-      <div>
-        <h4>Shop</h4>
-        <a href="store.html">Notes Store</a>
-        <a href="about.html">About Us</a>
-        <a href="contact.html">Contact</a>
+    </div>
+  </header>
+
+  <!-- Store Header -->
+  <div class="store-header">
+    <h1>Notes Store</h1>
+    <p>All Study Materials — Browse by Subject & Year</p>
+  </div>
+
+  <!-- Store Controls -->
+  <div class="store-controls">
+    <div class="search-box">
+      <input type="text" id="search" placeholder="Search notes by title or subject...">
+    </div>
+    <div class="filters">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="subject:Zoology">Zoology</button>
+      <button class="filter-btn" data-filter="subject:Botany">Botany</button>
+      <button class="filter-btn" data-filter="subject:Chemistry">Chemistry</button>
+      <button class="filter-btn" data-filter="year:1st Year">1st Year</button>
+      <button class="filter-btn" data-filter="year:2nd Year">2nd Year</button>
+      <button class="filter-btn" data-filter="year:3rd Year">3rd Year</button>
+    </div>
+    <select id="sort" class="sort-select">
+      <option value="latest">Latest First</option>
+      <option value="price-low">Price: Low to High</option>
+      <option value="price-high">Price: High to Low</option>
+      <option value="popular">Most Popular</option>
+    </select>
+  </div>
+
+  <!-- Store Content -->
+  <div class="store-content">
+    <div class="products-grid" id="products-container"></div>
+    <div class="empty-state" id="empty-state" style="display: none;">
+      <div class="empty-state-icon">📚</div>
+      <h2>No Notes Found</h2>
+      <p>Try adjusting your filters or search terms</p>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <div class="logo" style="margin-bottom: 16px;">
+          <div class="logo-icon" style="background: var(--accent);">📚</div>
+          <div class="logo-text">
+            <strong style="color: white;">ShreeJi</strong>
+            <small style="color: var(--accent);">NOTES</small>
+          </div>
+        </div>
+        <p style="color: rgba(255,255,255,0.8);">Premium study notes for MLSU B.Sc. B.Ed. students.</p>
       </div>
-      <div>
-        <h4>Support</h4>
-        <a href="faq.html">FAQ</a>
-        <a href="delivery-info.html">Delivery Info</a>
-        <a href="refund-policy.html">Refund Policy</a>
+      <div class="footer-section">
+        <h3>Quick Links</h3>
+        <ul>
+          <li><a href="./">Home</a></li>
+          <li><a href="./store.html">Notes Store</a></li>
+          <li><a href="./about.html">About Us</a></li>
+        </ul>
       </div>
-      <div>
-        <h4>Legal</h4>
-        <a href="terms.html">Terms &amp; Conditions</a>
-        <a href="privacy-policy.html">Privacy Policy</a>
-        <a href="disclaimer.html">Disclaimer</a>
+      <div class="footer-section">
+        <h3>Support</h3>
+        <ul>
+          <li><a href="./contact.html">Contact Us</a></li>
+          <li><a href="./delivery-info.html">Delivery Info</a></li>
+          <li><a href="./refund-policy.html">Refund Policy</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Legal</h3>
+        <ul>
+          <li><a href="./terms.html">Terms & Conditions</a></li>
+          <li><a href="./privacy-policy.html">Privacy Policy</a></li>
+          <li><a href="./disclaimer.html">Disclaimer</a></li>
+        </ul>
       </div>
     </div>
     <div class="footer-bottom">
-      <span>© <span id="year"></span> ShreeJi Notes. All rights reserved.</span>
-      <span>Made for MLSU students, with care.</span>
+      <p>&copy; 2024 ShreeJi Notes. All rights reserved.</p>
     </div>
-  </div>
-</footer>
+  </footer>
 
-<script type="module">
-  import { initMobileNav, fetchProducts, productCardHTML } from "./assets/js/main.js";
-  import { initCheckoutModal } from "./assets/js/cart.js";
+  <script type="module">
+    import { loadProducts, renderProductCard } from './assets/js/main.js';
+    import { initializeCheckout } from './assets/js/cart.js';
 
-  initMobileNav();
-  initCheckoutModal();
-  document.getElementById("year").textContent = new Date().getFullYear();
+    let allProducts = [];
+    let activeFilter = 'all';
+    let activeSort = 'latest';
+    let searchTerm = '';
 
-  let allProducts = [];
-  const grid = document.getElementById("storeGrid");
-
-  function render(filter){
-    const list = filter === "all" ? allProducts : allProducts.filter(p => p.subject === filter);
-    grid.innerHTML = list.length
-      ? list.map(productCardHTML).join("")
-      : `<p class="muted">No notes found in this category yet.</p>`;
-  }
-
-  document.getElementById("filterChips").addEventListener("click", (e) => {
-    const btn = e.target.closest(".filter-chip");
-    if(!btn) return;
-    document.querySelectorAll(".filter-chip").forEach(c => c.classList.remove("active"));
-    btn.classList.add("active");
-    render(btn.dataset.filter);
-  });
-
-  (async () => {
-    try{
-      allProducts = await fetchProducts({ max: 100 });
-      render("all");
-    }catch(err){
-      console.error(err);
-      grid.innerHTML = `<p class="muted">Could not load notes right now. Please refresh.</p>`;
+    async function init() {
+      allProducts = await loadProducts();
+      renderProducts();
+      setupEventListeners();
     }
-  })();
-</script>
+
+    function setupEventListeners() {
+      document.getElementById('search').addEventListener('input', (e) => {
+        searchTerm = e.target.value.toLowerCase();
+        renderProducts();
+      });
+
+      document.querySelectorAll('[data-filter]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          document.querySelectorAll('[data-filter]').forEach(b => b.classList.remove('active'));
+          e.target.classList.add('active');
+          activeFilter = e.target.dataset.filter;
+          renderProducts();
+        });
+      });
+
+      document.getElementById('sort').addEventListener('change', (e) => {
+        activeSort = e.target.value;
+        renderProducts();
+      });
+    }
+
+    function filterProducts() {
+      let filtered = allProducts;
+
+      // Filter by search term
+      if (searchTerm) {
+        filtered = filtered.filter(p => 
+          p.title.toLowerCase().includes(searchTerm) ||
+          p.subject.toLowerCase().includes(searchTerm)
+        );
+      }
+
+      // Filter by category/subject/year
+      if (activeFilter !== 'all') {
+        const [key, value] = activeFilter.split(':');
+        filtered = filtered.filter(p => p[key] === value);
+      }
+
+      return filtered;
+    }
+
+    function sortProducts(products) {
+      const sorted = [...products];
+      switch(activeSort) {
+        case 'price-low':
+          return sorted.sort((a, b) => a.price - b.price);
+        case 'price-high':
+          return sorted.sort((a, b) => b.price - a.price);
+        case 'popular':
+          return sorted.sort((a, b) => b.rating - a.rating);
+        case 'latest':
+        default:
+          return sorted.sort((a, b) => new Date(b.createdAt.toDate()) - new Date(a.createdAt.toDate()));
+      }
+    }
+
+    function renderProducts() {
+      const filtered = filterProducts();
+      const sorted = sortProducts(filtered);
+
+      const container = document.getElementById('products-container');
+      const emptyState = document.getElementById('empty-state');
+
+      if (sorted.length === 0) {
+        container.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
+      }
+
+      emptyState.style.display = 'none';
+      container.innerHTML = '';
+      sorted.forEach(product => {
+        container.appendChild(renderProductCard(product));
+      });
+      initializeCheckout();
+    }
+
+    init();
+  </script>
 </body>
 </html>

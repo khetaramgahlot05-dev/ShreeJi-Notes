@@ -1,148 +1,430 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title id="pageTitle">Product — ShreeJi Notes</title>
-<link rel="stylesheet" href="assets/css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Details - ShreeJi Notes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./assets/css/style.css">
+  <style>
+    .breadcrumb {
+      padding: 16px 24px;
+      background: white;
+      border-bottom: 1px solid var(--border);
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .breadcrumb a {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .product-detail {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 48px 24px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+    }
+
+    .product-gallery {
+      position: relative;
+    }
+
+    .product-image-main {
+      width: 100%;
+      height: 400px;
+      background: linear-gradient(135deg, var(--accent-light) 0%, var(--bg-secondary) 100%);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 8rem;
+      margin-bottom: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .product-image-main::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 10px,
+        rgba(201, 162, 39, 0.05) 10px,
+        rgba(201, 162, 39, 0.05) 20px
+      );
+    }
+
+    .product-badge {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: linear-gradient(135deg, var(--highlight) 0%, #D1158A 100%);
+      color: white;
+      padding: 10px 16px;
+      border-radius: 20px;
+      font-weight: 700;
+      z-index: 2;
+    }
+
+    .product-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .product-category {
+      font-size: 0.85rem;
+      color: var(--accent);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+
+    .product-title {
+      font-size: 2.5rem;
+      color: var(--primary);
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+
+    .product-rating {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+      font-weight: 600;
+    }
+
+    .rating-stars {
+      color: var(--accent);
+      font-size: 1.2rem;
+      letter-spacing: 2px;
+    }
+
+    .rating-count {
+      color: var(--text-soft);
+      font-size: 0.95rem;
+    }
+
+    .price-section {
+      padding: 24px;
+      background: var(--bg-secondary);
+      border-radius: 12px;
+      border: 2px dashed var(--accent);
+      margin-bottom: 24px;
+    }
+
+    .price-original {
+      text-decoration: line-through;
+      color: var(--text-soft);
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+    }
+
+    .price-current {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+
+    .price-discount {
+      display: inline-block;
+      background: var(--danger);
+      color: white;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 12px;
+    }
+
+    .limited-offer {
+      background: #FFE5E5;
+      color: var(--danger);
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .product-actions {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .product-actions button {
+      flex: 1;
+      padding: 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    .highlights {
+      margin-bottom: 32px;
+    }
+
+    .highlights h3 {
+      font-size: 1.3rem;
+      margin-bottom: 16px;
+      color: var(--primary);
+    }
+
+    .highlights-list {
+      list-style: none;
+    }
+
+    .highlights-list li {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .highlights-list li::before {
+      content: '✓';
+      color: var(--success);
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+
+    .description {
+      margin-bottom: 32px;
+      line-height: 1.8;
+      color: var(--text-soft);
+    }
+
+    .trust-badges {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .trust-badge {
+      background: var(--bg-secondary);
+      padding: 16px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 0.9rem;
+      border-left: 4px solid var(--accent);
+    }
+
+    @media (max-width: 768px) {
+      .product-detail {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+
+      .product-title {
+        font-size: 1.8rem;
+      }
+
+      .price-current {
+        font-size: 1.8rem;
+      }
+
+      .product-actions {
+        flex-direction: column;
+      }
+    }
+  </style>
 </head>
 <body>
-
-<header class="site-header">
-  <div class="header-inner">
-    <a href="index.html" class="brand">
-      <div class="brand-mark">SJ</div>
-      <div class="brand-text">
-        <span class="b1">ShreeJi</span>
-        <span class="b2">Notes</span>
-      </div>
-    </a>
-    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">☰</button>
-    <nav class="main-nav" id="mainNav">
-      <a href="index.html">Home</a>
-      <a href="store.html" class="active">Notes Store</a>
-      <a href="about.html">About Us</a>
-      <a href="contact.html">Contact</a>
-      <a href="faq.html">FAQ</a>
-    </nav>
-  </div>
-</header>
-
-<section class="section">
-  <div class="container" id="productRoot">
-    <p class="muted">Loading…</p>
-  </div>
-</section>
-
-<footer class="site-footer">
-  <div class="container">
-    <div class="footer-grid">
-      <div>
-        <div class="brand-text" style="margin-bottom:10px;">
-          <span class="b1" style="color:var(--gold-light);">ShreeJi Notes</span>
+  <!-- Header -->
+  <header>
+    <div class="header-content">
+      <a href="./" class="logo">
+        <div class="logo-icon">📚</div>
+        <div class="logo-text">
+          <strong>ShreeJi</strong>
+          <small>NOTES</small>
         </div>
-        <p style="font-size:0.85rem;color:#C9B68F;max-width:280px;">Exam-focused PDF study notes for B.Sc. B.Ed. students, built around the MLSU syllabus.</p>
+      </a>
+      <nav>
+        <ul>
+          <li><a href="./">Home</a></li>
+          <li><a href="./store.html">Store</a></li>
+          <li><a href="./about.html">About</a></li>
+          <li><a href="./faq.html">FAQ</a></li>
+          <li><a href="./contact.html">Contact</a></li>
+        </ul>
+      </nav>
+      <div class="header-actions">
+        <div class="cart-badge">🛒<span class="cart-count">0</span></div>
+        <button class="mobile-menu-btn">☰</button>
       </div>
-      <div>
-        <h4>Shop</h4>
-        <a href="store.html">Notes Store</a>
-        <a href="about.html">About Us</a>
-        <a href="contact.html">Contact</a>
+    </div>
+  </header>
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <a href="./">Home</a> > <a href="./store.html">Store</a> > <span id="product-name">Product</span>
+  </div>
+
+  <!-- Product Detail -->
+  <div class="product-detail">
+    <div class="product-gallery">
+      <div class="product-image-main" id="product-image">📚</div>
+    </div>
+    <div class="product-info">
+      <div class="product-category" id="product-category">Category</div>
+      <h1 class="product-title" id="product-title">Product Title</h1>
+      
+      <div class="product-rating">
+        <span class="rating-stars" id="product-rating">★★★★★</span>
+        <span class="rating-count" id="rating-count">(0 ratings)</span>
       </div>
-      <div>
-        <h4>Support</h4>
-        <a href="faq.html">FAQ</a>
-        <a href="delivery-info.html">Delivery Info</a>
-        <a href="refund-policy.html">Refund Policy</a>
+
+      <div class="price-section">
+        <div class="price-original" id="product-mrp">₹299</div>
+        <div class="price-current" id="product-price">₹49</div>
+        <div class="price-discount" id="discount-badge">-84%</div>
+        <div class="limited-offer">⏰ Limited Time Offer</div>
       </div>
-      <div>
-        <h4>Legal</h4>
-        <a href="terms.html">Terms &amp; Conditions</a>
-        <a href="privacy-policy.html">Privacy Policy</a>
-        <a href="disclaimer.html">Disclaimer</a>
+
+      <div class="product-actions">
+        <button class="btn btn-outline" id="add-cart">Add to Cart</button>
+        <button class="btn btn-primary" id="buy-now">Buy Now at ₹49</button>
+      </div>
+
+      <div class="highlights">
+        <h3>What You Get</h3>
+        <ul class="highlights-list" id="highlights"></ul>
+      </div>
+
+      <div class="description">
+        <h3 style="color: var(--primary); margin-bottom: 12px;">About These Notes</h3>
+        <p id="product-description">Description will appear here</p>
+      </div>
+
+      <div class="trust-badges">
+        <div class="trust-badge">⚡ Instant Access</div>
+        <div class="trust-badge">🔒 Secure Payment</div>
+        <div class="trust-badge">📱 All Devices</div>
+        <div class="trust-badge">↩ Easy Refund</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <div class="logo" style="margin-bottom: 16px;">
+          <div class="logo-icon" style="background: var(--accent);">📚</div>
+          <div class="logo-text">
+            <strong style="color: white;">ShreeJi</strong>
+            <small style="color: var(--accent);">NOTES</small>
+          </div>
+        </div>
+        <p style="color: rgba(255,255,255,0.8);">Premium study notes for MLSU B.Sc. B.Ed. students.</p>
+      </div>
+      <div class="footer-section">
+        <h3>Quick Links</h3>
+        <ul>
+          <li><a href="./">Home</a></li>
+          <li><a href="./store.html">Notes Store</a></li>
+          <li><a href="./about.html">About Us</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Support</h3>
+        <ul>
+          <li><a href="./contact.html">Contact Us</a></li>
+          <li><a href="./delivery-info.html">Delivery Info</a></li>
+          <li><a href="./refund-policy.html">Refund Policy</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Legal</h3>
+        <ul>
+          <li><a href="./terms.html">Terms & Conditions</a></li>
+          <li><a href="./privacy-policy.html">Privacy Policy</a></li>
+          <li><a href="./disclaimer.html">Disclaimer</a></li>
+        </ul>
       </div>
     </div>
     <div class="footer-bottom">
-      <span>© <span id="year"></span> ShreeJi Notes. All rights reserved.</span>
-      <span>Made for MLSU students, with care.</span>
+      <p>&copy; 2024 ShreeJi Notes. All rights reserved.</p>
     </div>
-  </div>
-</footer>
+  </footer>
 
-<script type="module">
-  import { initMobileNav, fetchProductById, formatINR, escapeHTML } from "./assets/js/main.js";
-  import { initCheckoutModal } from "./assets/js/cart.js";
+  <script type="module">
+    import { calculateDiscount, showNotification } from './assets/js/main.js';
+    import { initializeCheckout } from './assets/js/cart.js';
+    import { db } from './assets/js/firebase-config.js';
+    import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js';
 
-  initMobileNav();
-  initCheckoutModal();
-  document.getElementById("year").textContent = new Date().getFullYear();
+    async function loadProduct() {
+      const params = new URLSearchParams(window.location.search);
+      const productId = params.get('id');
 
-  const root = document.getElementById("productRoot");
-  const params = new URLSearchParams(location.search);
-  const id = params.get("id");
+      if (!productId) {
+        showNotification('Product not found', 'error');
+        return;
+      }
 
-  (async () => {
-    if(!id){ root.innerHTML = `<p class="muted">No product specified.</p>`; return; }
-    const p = await fetchProductById(id);
-    if(!p){ root.innerHTML = `<p class="muted">This product could not be found.</p><a class="btn btn-outline" href="store.html">Back to Notes Store</a>`; return; }
+      try {
+        const productRef = doc(db, 'products', productId);
+        const productSnap = await getDoc(productRef);
 
-    document.getElementById("pageTitle").textContent = p.title + " — ShreeJi Notes";
+        if (!productSnap.exists()) {
+          showNotification('Product not found', 'error');
+          return;
+        }
 
-    const images = (p.images && p.images.length) ? p.images : [];
-    const highlights = (p.highlights && p.highlights.length) ? p.highlights : [
-      "Unit-wise organized notes",
-      "Focused on exam preparation",
-      "Well-structured & easy to understand",
-      "Instant access after purchase",
-      "Prepared for better academic performance"
-    ];
-    const off = (p.mrp && p.price) ? Math.round(100 - (p.price / p.mrp) * 100) : null;
+        const product = productSnap.data();
+        const discount = calculateDiscount(product.mrp, product.price);
 
-    root.innerHTML = `
-      <div class="product-grid">
-        <div>
-          <div class="gallery-main">
-            ${images[0] ? `<img id="mainImg" src="${images[0]}" alt="${escapeHTML(p.title)}">`
-                        : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--ink-soft);">No image yet</div>`}
-          </div>
-          ${images.length > 1 ? `<div class="gallery-thumbs" id="thumbs">
-            ${images.map((img,i) => `<button class="thumb-btn ${i===0?'active':''}" data-img="${img}"><img src="${img}" alt="thumbnail ${i+1}"></button>`).join("")}
-          </div>` : ``}
-        </div>
-        <div>
-          ${p.featured ? `<span class="badge-bestseller">#1 Best Seller</span>` : ``}
-          <h1 style="font-size:clamp(1.5rem,2.6vw,1.9rem);">${escapeHTML(p.title)}</h1>
-          <p class="muted" style="margin-top:-6px;">${escapeHTML(p.category || "")}</p>
-          ${p.rating ? `<span class="rating-pill">${p.rating}★</span> <span class="muted" style="font-size:0.85rem;">(${p.reviewCount || 0})</span>` : ``}
-          <div class="price-block">
-            ${off ? `<span class="off">↓${off}%</span>` : ``}
-            ${p.mrp ? `<span class="mrp">${formatINR(p.mrp)}</span>` : ``}
-            <span class="now">${formatINR(p.price)}</span>
-          </div>
-          <p class="limited-offer">Limited Time Offer</p>
-          <div class="buy-actions">
-            <button class="btn btn-outline" data-buy="${p.id}">Add to Cart</button>
-            <button class="btn btn-gold" data-buy="${p.id}">Buy at ${formatINR(p.price)}</button>
-          </div>
-          <h3 style="font-size:1.05rem;">Highlight</h3>
-          <ul class="highlight-list">${highlights.map(h => `<li>${escapeHTML(h)}</li>`).join("")}</ul>
-          ${p.description ? `<div class="prose" style="margin-top:20px;"><h3 style="font-size:1.05rem;">Description</h3><p>${escapeHTML(p.description)}</p></div>` : ``}
-          <div class="trust-row">
-            <span class="t-item">⚡ Instant access after payment confirmation</span>
-            <span class="t-item">🔒 Secure UPI payment</span>
-            <span class="t-item">📱 Works on mobile, tablet &amp; desktop</span>
-          </div>
-        </div>
-      </div>`;
+        // Update page content
+        document.getElementById('product-name').textContent = product.title;
+        document.getElementById('product-category').textContent = `${product.subject} • ${product.year}`;
+        document.getElementById('product-title').textContent = product.title;
+        document.getElementById('product-rating').textContent = '★'.repeat(Math.round(product.rating));
+        document.getElementById('rating-count').textContent = `(${product.reviewCount} ratings)`;
+        document.getElementById('product-mrp').textContent = `₹${product.mrp}`;
+        document.getElementById('product-price').textContent = `₹${product.price}`;
+        document.getElementById('discount-badge').textContent = `-${discount}%`;
+        document.getElementById('product-description').textContent = product.description;
+        document.getElementById('buy-now').textContent = `Buy Now at ₹${product.price}`;
 
-    document.getElementById("thumbs")?.addEventListener("click", (e) => {
-      const btn = e.target.closest(".thumb-btn");
-      if(!btn) return;
-      document.getElementById("mainImg").src = btn.dataset.img;
-      document.querySelectorAll(".thumb-btn").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-    });
-  })();
-</script>
+        // Highlights
+        const highlightsList = document.getElementById('highlights');
+        product.highlights.forEach(highlight => {
+          const li = document.createElement('li');
+          li.textContent = highlight;
+          highlightsList.appendChild(li);
+        });
+
+        // Event listeners
+        document.getElementById('buy-now').dataset.buy = productId;
+        document.getElementById('add-cart').addEventListener('click', () => {
+          showNotification('Added to cart!', 'success');
+        });
+
+        initializeCheckout();
+      } catch (error) {
+        console.error('Error loading product:', error);
+        showNotification('Error loading product', 'error');
+      }
+    }
+
+    loadProduct();
+  </script>
 </body>
 </html>

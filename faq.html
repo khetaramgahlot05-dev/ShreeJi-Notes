@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FAQ - ShreeJi Notes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./assets/css/style.css">
+  <style>
+    .breadcrumb {
+      padding: 16px 24px;
+      background: white;
+      border-bottom: 1px solid var(--border);
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .page-header {
+      padding: 48px 24px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      text-align: center;
+      border-bottom: 2px dashed var(--accent);
+    }
+
+    .page-header h1 {
+      color: white;
+      font-size: 2.5rem;
+      margin-bottom: 8px;
+    }
+
+    .page-content {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 64px 24px;
+    }
+
+    .faq-item {
+      background: white;
+      margin-bottom: 16px;
+      border-radius: 12px;
+      border-left: 4px solid var(--accent);
+      box-shadow: 0 2px 8px rgba(107, 26, 42, 0.08);
+      overflow: hidden;
+    }
+
+    .faq-question {
+      padding: 20px 24px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-secondary);
+      transition: var(--transition);
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .faq-question:hover {
+      background: var(--accent-light);
+    }
+
+    .faq-question::after {
+      content: '+';
+      font-size: 1.5rem;
+      transition: var(--transition);
+    }
+
+    .faq-item.active .faq-question::after {
+      transform: rotate(45deg);
+    }
+
+    .faq-answer {
+      padding: 0 24px;
+      max-height: 0;
+      overflow: hidden;
+      transition: var(--transition);
+      color: var(--text-soft);
+      line-height: 1.8;
+    }
+
+    .faq-item.active .faq-answer {
+      padding: 20px 24px;
+      max-height: 500px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="header-content">
+      <a href="./" class="logo">
+        <div class="logo-icon">📚</div>
+        <div class="logo-text">
+          <strong>ShreeJi</strong>
+          <small>NOTES</small>
+        </div>
+      </a>
+      <nav>
+        <ul>
+          <li><a href="./">Home</a></li>
+          <li><a href="./store.html">Store</a></li>
+          <li><a href="./about.html">About</a></li>
+          <li><a href="./faq.html" class="active">FAQ</a></li>
+          <li><a href="./contact.html">Contact</a></li>
+        </ul>
+      </nav>
+      <div class="header-actions">
+        <div class="cart-badge">🛒<span class="cart-count">0</span></div>
+        <button class="mobile-menu-btn">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <a href="./">Home</a> > FAQ
+  </div>
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1>Frequently Asked Questions</h1>
+  </div>
+
+  <!-- Page Content -->
+  <div class="page-content" id="faq-container"></div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <div class="logo" style="margin-bottom: 16px;">
+          <div class="logo-icon" style="background: var(--accent);">📚</div>
+          <div class="logo-text">
+            <strong style="color: white;">ShreeJi</strong>
+            <small style="color: var(--accent);">NOTES</small>
+          </div>
+        </div>
+        <p style="color: rgba(255,255,255,0.8);">Premium study notes for MLSU B.Sc. B.Ed. students.</p>
+      </div>
+      <div class="footer-section">
+        <h3>Quick Links</h3>
+        <ul>
+          <li><a href="./">Home</a></li>
+          <li><a href="./store.html">Notes Store</a></li>
+          <li><a href="./about.html">About Us</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Support</h3>
+        <ul>
+          <li><a href="./contact.html">Contact Us</a></li>
+          <li><a href="./delivery-info.html">Delivery Info</a></li>
+          <li><a href="./refund-policy.html">Refund Policy</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Legal</h3>
+        <ul>
+          <li><a href="./terms.html">Terms & Conditions</a></li>
+          <li><a href="./privacy-policy.html">Privacy Policy</a></li>
+          <li><a href="./disclaimer.html">Disclaimer</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2024 ShreeJi Notes. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script type="module">
+    const defaultFAQ = [
+      {
+        question: 'How will I receive my notes after purchase?',
+        answer: 'After you complete payment and upload the screenshot, our team verifies it within a few hours (usually within 4-6 hours). Once verified, we send the PDF download link to your email. You can download the PDF immediately and access it on any device.'
+      },
+      {
+        question: 'Are the notes updated for the latest MLSU syllabus?',
+        answer: 'Yes! Our notes are regularly reviewed and updated to match the latest MLSU syllabus. We ensure that all topics, units, and exam patterns are current. If there are syllabus changes, we update our notes accordingly.'
+      },
+      {
+        question: 'Can I use these notes on mobile devices?',
+        answer: 'Absolutely! Our PDF notes work perfectly on all devices - smartphones, tablets, and computers. You can download and read them using any PDF reader app. The notes are optimized for easy reading on smaller screens.'
+      },
+      {
+        question: 'Can I share these notes with my friends?',
+        answer: 'No, our notes are for personal use only. Each purchase is meant for individual use. Sharing copyrighted material violates our terms of service. We offer affordable prices so everyone can purchase their own copy.'
+      },
+      {
+        question: 'What if I cannot access the download link?',
+        answer: 'If you have any issues accessing your PDF, please contact us immediately via WhatsApp or email with your order details. Our support team will help you troubleshoot and resend the link if needed.'
+      },
+      {
+        question: 'Do you offer refunds if I\'m not satisfied?',
+        answer: 'Yes! We offer a 100% refund policy. If you\'re not satisfied with the notes within 7 days of purchase, you can request a full refund. Please read our Refund Policy for complete details.'
+      },
+      {
+        question: 'How accurate are the notes for my exam?',
+        answer: 'Our notes are created by top-scoring students and are highly accurate. They\'re designed specifically for MLSU exams and include only exam-relevant topics. However, we recommend supplementing them with your textbooks for comprehensive understanding.'
+      },
+      {
+        question: 'What payment methods do you accept?',
+        answer: 'We accept all UPI payment methods - Google Pay, PhonePe, Paytm, BHIM, and any bank UPI app. Simply scan the QR code and pay using your preferred UPI app.'
+      }
+    ];
+
+    function renderFAQ(items) {
+      const container = document.getElementById('faq-container');
+      container.innerHTML = items.map((item, index) => `
+        <div class="faq-item" data-index="${index}">
+          <div class="faq-question">${item.question}</div>
+          <div class="faq-answer">${item.answer}</div>
+        </div>
+      `).join('');
+
+      document.querySelectorAll('.faq-item').forEach(item => {
+        item.querySelector('.faq-question').addEventListener('click', () => {
+          item.classList.toggle('active');
+        });
+      });
+    }
+
+    renderFAQ(defaultFAQ);
+  </script>
+</body>
+</html>
