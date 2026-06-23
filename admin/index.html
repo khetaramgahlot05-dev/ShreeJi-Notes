@@ -551,18 +551,15 @@
   import { getFirestore, collection, getDocs, doc, updateDoc, addDoc, deleteDoc, query, orderBy, where, serverTimestamp }
     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-  // ════════════════════════════════════════
-  // ⚠️  APNA FIREBASE CONFIG YAHAN PASTE KARO
-  // ════════════════════════════════════════
   const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
+    apiKey: "AIzaSyAmHZqQwcFJEoSTLUww-zjsT42-8F19qCU",
     authDomain: "shreejinotes.firebaseapp.com",
     projectId: "shreejinotes",
-    storageBucket: "shreejinotes.appspot.com",
-    messagingSenderId: "YOUR_SENDER_ID",
-    appId: "YOUR_APP_ID"
+    storageBucket: "shreejinotes.firebasestorage.app",
+    messagingSenderId: "324031808978",
+    appId: "1:324031808978:web:3dccc6865566747b06f40b",
+    measurementId: "G-PXS21FT9TY"
   };
-  // ════════════════════════════════════════
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
