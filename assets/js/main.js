@@ -1,112 +1,134 @@
-// ==========================================================================
-// ShreeJi Notes — Shared site helpers (customer-facing pages)
-// ==========================================================================
-import { db, collection, getDocs, query, where, orderBy, limit } from "./firebase-config.js";
-
-/* ---------------- Mobile nav ---------------- */
-export function initMobileNav(){
-  const toggle = document.querySelector(".nav-toggle");
-  const nav = document.querySelector(".main-nav");
-  if(!toggle || !nav) return;
-  toggle.addEventListener("click", () => nav.classList.toggle("open"));
-  nav.querySelectorAll("a").forEach(a => a.addEventListener("click", () => nav.classList.remove("open")));
+export function formatCurrency(amount) {
+  return new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+  }).format(amount);
 }
 
-/* ---------------- Currency ---------------- */
-export function formatINR(n){
-  return "₹" + Number(n).toLocaleString("en-IN");
+export function calculateDiscount(original, current) {
+  return Math.round(((original - current) / original) * 100);
 }
 
-/* ---------------- Image compression (browser-side, no Storage needed) ----------------
-   Resizes + compresses an uploaded image file into a small base64 JPEG string
-   so it safely fits inside a Firestore document (1 MB limit per document). */
-export function compressImageToBase64(file, maxWidth = 700, quality = 0.7){
+export function validatePhone(phone) {
+  const cleaned = phone.replace(/\D/g, '');
+  return cleaned.length === 10 && /^[6-9]/.test(cleaned);
+}
+
+export function validateEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+export function compressImage(file, maxWidth = 700, quality = 0.6) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.onerror = () => reject(new Error("Could not read file"));
     reader.onload = (e) => {
       const img = new Image();
-      img.onerror = () => reject(new Error("Could not load image"));
       img.onload = () => {
-        const scale = Math.min(1, maxWidth / img.width);
-        const canvas = document.createElement("canvas");
-        canvas.width = img.width * scale;
-        canvas.height = img.height * scale;
-        const ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        resolve(canvas.toDataURL("image/jpeg", quality));
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let width = img.width;
+        let height = img.height;
+        
+        if (width > maxWidth) {
+          height = (height * maxWidth) / width;
+          width = maxWidth;
+        }
+        
+        canvas.width = width;
+        canvas.height = height;
+        ctx.drawImage(img, 0, 0, width, height);
+        
+        canvas.toBlob((blob) => {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            resolve(reader.result);
+          };
+          reader.readAsDataURL(blob);
+        }, 'image/jpeg', quality);
       };
+      img.onerror = reject;
       img.src = e.target.result;
     };
+    reader.onerror = reject;
     reader.readAsDataURL(file);
   });
 }
 
-/* ---------------- Products ---------------- */
-export async function fetchProducts({ featuredOnly = false, subject = null, max = 50 } = {}){
-  const col = collection(db, "products");
-  const clauses = [where("active", "==", true)];
-  if(featuredOnly) clauses.push(where("featured", "==", true));
-  if(subject) clauses.push(where("subject", "==", subject));
-  let q;
-  try{
-    q = query(col, ...clauses, orderBy("createdAt", "desc"), limit(max));
-    const snap = await getDocs(q);
-    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
-  }catch(err){
-    // Fallback without orderBy in case a composite index isn't created yet
-    q = query(col, ...clauses, limit(max));
-    const snap = await getDocs(q);
-    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+export function formatDate(date) {
+  if (!(date instanceof Date)) {
+    date = date.toDate ? date.toDate() : new Date(date);
+  }
+  return new Intl.DateTimeFormat('en-IN', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric'
+  }).format(date);
+}
+
+export function showNotification(message, type = 'success') {
+  const div = document.createElement('div');
+  div.className = `notification notification-${type}`;
+  div.textContent = message;
+  div.style.cssText = `
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: ${type === 'success' ? '#2E7D4F' : '#B23A2E'};
+    color: white;
+    padding: 16px 24px;
+    border-radius: 8px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    z-index: 10000;
+    animation: slideUp 0.3s ease-out;
+  `;
+  document.body.appendChild(div);
+  setTimeout(() => div.remove(), 3000);
+}
+
+export async function loadProducts() {
+  try {
+    const { collection, getDocs, query, where } = await import('https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js');
+    const { db } = await import('./firebase-config.js');
+    
+    const q = query(collection(db, 'products'), where('active', '==', true));
+    const snapshot = await getDocs(q);
+    
+    const products = [];
+    snapshot.forEach(doc => {
+      products.push({ id: doc.id, ...doc.data() });
+    });
+    return products;
+  } catch (error) {
+    console.error('Error loading products:', error);
+    return [];
   }
 }
 
-export function productCardHTML(p){
-  const img = (p.images && p.images[0]) ? p.images[0] : "";
-  const off = p.mrp && p.price ? Math.round(100 - (p.price / p.mrp) * 100) : null;
-  return `
-  <article class="card-product">
-    <a href="product.html?id=${p.id}">
-      ${img ? `<img class="thumb" src="${img}" alt="${escapeHTML(p.title)} cover">`
-            : `<div class="thumb" style="display:flex;align-items:center;justify-content:center;color:var(--ink-soft);font-size:0.8rem;">No image yet</div>`}
-    </a>
-    <div class="body">
-      ${p.featured ? `<span class="badge">Best Seller</span>` : ``}
-      <a href="product.html?id=${p.id}" class="title">${escapeHTML(p.title)}</a>
-      <div class="meta">${escapeHTML(p.category || "")}</div>
-      <div class="price-row">
-        <span class="price-now">${formatINR(p.price)}</span>
-        ${p.mrp ? `<span class="price-mrp">${formatINR(p.mrp)}</span>` : ``}
-        ${off ? `<span class="price-off">${off}% off</span>` : ``}
+export function renderProductCard(product) {
+  const discount = calculateDiscount(product.mrp, product.price);
+  const card = document.createElement('div');
+  card.className = 'product-card';
+  card.innerHTML = `
+    <div class="product-image">
+      📖
+      ${product.featured ? '<div class="product-badge">⭐ Best Seller</div>' : ''}
+    </div>
+    <div class="product-info">
+      <div class="product-subject">${product.subject}</div>
+      <h3 class="product-title">${product.title}</h3>
+      <div class="product-price">
+        <span class="price-original">₹${product.mrp}</span>
+        <span class="price-current">₹${product.price}</span>
+        <span class="discount-badge">-${discount}%</span>
       </div>
-      <div class="actions">
-        <a class="btn btn-outline btn-sm" href="product.html?id=${p.id}">View</a>
-        <button class="btn btn-primary btn-sm" data-buy="${p.id}">Buy Now</button>
+      <div class="product-actions">
+        <button class="btn btn-details" onclick="location.href='product.html?id=${product.id}'">View Details</button>
+        <button class="btn btn-buy" data-buy="${product.id}">Buy Now</button>
       </div>
     </div>
-  </article>`;
-}
-
-export function escapeHTML(str = ""){
-  return String(str).replace(/[&<>"']/g, s => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[s]));
-}
-
-/* ---------------- Countdown timer (used in checkout modal) ---------------- */
-export function startCountdown(seconds, el, onExpire){
-  let remaining = seconds;
-  el.textContent = formatTime(remaining);
-  const t = setInterval(() => {
-    remaining--;
-    el.textContent = formatTime(remaining);
-    if(remaining <= 0){
-      clearInterval(t);
-      if(onExpire) onExpire();
-    }
-  }, 1000);
-  return t;
-  function formatTime(s){
-    const m = Math.floor(s/60).toString().padStart(2,"0");
-    const sec = (s%60).toString().padStart(2,"0");
-    return `${m}:${sec}`;
-  }
+  `;
+  return card;
 }

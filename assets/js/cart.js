@@ -1,213 +1,311 @@
-// ==========================================================================
-// ShreeJi Notes — Checkout Modal (Add to Cart / Buy Now flow)
-// Injects a self-contained modal into every page that imports this file.
-// Flow: Step 1 (contact details) -> Step 2 (QR + timer + screenshot) -> Step 3 (success)
-// ==========================================================================
-import {
-  db, doc, getDoc, addDoc, collection, serverTimestamp
-} from "./firebase-config.js";
-import { formatINR, compressImageToBase64, startCountdown, escapeHTML } from "./main.js";
-
-const PAYMENT_WINDOW_SECONDS = 10 * 60; // 10 minute QR timer
+import { formatCurrency, validatePhone, validateEmail, compressImage, showNotification } from './main.js';
+import { db } from './firebase-config.js';
+import { collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js';
 
 let currentProduct = null;
-let countdownTimer = null;
-let screenshotBase64 = null;
+let currentStep = 1;
+let orderData = {};
+let paymentQRCode = null;
+let paymentTimer = null;
 
-const modalHTML = `
-<div class="modal-overlay" id="checkoutModal">
-  <div class="modal-box">
-    <button class="modal-close" type="button" aria-label="Close" id="checkoutClose">&times;</button>
+export function initializeCheckout() {
+  const buyButtons = document.querySelectorAll('[data-buy]');
+  buyButtons.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const productId = e.target.dataset.buy;
+      openCheckoutModal(productId);
+    });
+  });
+}
 
-    <!-- Step 1: Contact details -->
-    <div class="modal-step active" data-step="1">
-      <div class="modal-head"><h3 style="margin-bottom:4px;">Your details</h3>
-        <p class="muted" style="margin-top:0;font-size:0.85rem;" id="checkoutProductLabel"></p>
-      </div>
-      <div class="modal-body">
-        <div class="field" id="f-name">
-          <label for="buyerName">Full name</label>
-          <input type="text" id="buyerName" placeholder="Your name" autocomplete="name">
-          <div class="error">Please enter your name</div>
-        </div>
-        <div class="field" id="f-phone">
-          <label for="buyerPhone">Phone number</label>
-          <input type="tel" id="buyerPhone" placeholder="10-digit mobile number" autocomplete="tel">
-          <div class="error">Please enter a valid 10-digit phone number</div>
-        </div>
-        <div class="field" id="f-email">
-          <label for="buyerEmail">Email</label>
-          <input type="email" id="buyerEmail" placeholder="you@example.com" autocomplete="email">
-          <div class="error">Please enter a valid email</div>
-        </div>
-        <button class="btn btn-primary btn-block" id="checkoutContinue">Continue</button>
-      </div>
-    </div>
+async function openCheckoutModal(productId) {
+  // Create modal if not exists
+  let modal = document.getElementById('checkout-modal');
+  if (!modal) {
+    modal = createCheckoutModal();
+    document.body.appendChild(modal);
+  }
 
-    <!-- Step 2: QR + timer + screenshot -->
-    <div class="modal-step" data-step="2">
-      <div class="modal-head"><h3 style="margin-bottom:4px;">Scan &amp; pay</h3></div>
-      <div class="modal-body">
-        <div class="text-center" style="margin-bottom:14px;">
-          <img id="qrImage" src="" alt="Payment QR code" style="width:190px;height:190px;object-fit:contain;border:1.5px solid var(--rule-line);border-radius:var(--radius-md);background:#fff;padding:10px;">
-          <div style="margin-top:10px;font-family:var(--font-display);font-weight:800;font-size:1.4rem;color:var(--maroon);" id="qrAmount"></div>
-          <div class="muted" style="font-size:0.82rem;">Time left to pay: <strong id="qrTimer" style="color:var(--maroon);">10:00</strong></div>
-        </div>
-        <div class="field">
-          <label for="screenshotInput">Upload payment screenshot</label>
-          <input type="file" id="screenshotInput" accept="image/*">
-          <div class="hint">After paying, upload a screenshot here as proof.</div>
-          <div class="error">Please upload a screenshot before placing the order</div>
-        </div>
-        <div id="screenshotPreviewWrap" style="display:none;margin-bottom:12px;">
-          <img id="screenshotPreview" style="max-height:140px;border-radius:var(--radius-sm);border:1px solid var(--rule-line);">
-        </div>
-        <button class="btn btn-primary btn-block" id="placeOrderBtn">Place order</button>
-        <div id="qrExpiredMsg" style="display:none;text-align:center;margin-top:12px;color:var(--danger);font-size:0.85rem;">
-          Time expired. <button type="button" class="btn btn-outline btn-sm" id="restartTimerBtn" style="margin-top:8px;">Get a new QR</button>
-        </div>
-      </div>
-    </div>
+  // Load product
+  const { doc, getDoc } = await import('https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js');
+  const productRef = doc(db, 'products', productId);
+  const productSnap = await getDoc(productRef);
 
-    <!-- Step 3: Success -->
-    <div class="modal-step" data-step="3">
-      <div class="modal-body text-center" style="padding-top:34px;">
-        <div style="width:60px;height:60px;border-radius:50%;background:var(--success);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin:0 auto 16px;">✓</div>
-        <h3>Order placed</h3>
-        <p class="muted">We're verifying your payment. Your notes will be sent to your email/phone within a few hours once confirmed.</p>
-        <button class="btn btn-primary" id="checkoutDone">Done</button>
-      </div>
-    </div>
-  </div>
-</div>`;
+  if (!productSnap.exists()) {
+    showNotification('Product not found', 'error');
+    return;
+  }
 
-export function initCheckoutModal(){
-  document.body.insertAdjacentHTML("beforeend", modalHTML);
+  currentProduct = { id: productId, ...productSnap.data() };
+  currentStep = 1;
+  orderData = {};
+  paymentQRCode = null;
 
-  const overlay = document.getElementById("checkoutModal");
-  const closeBtn = document.getElementById("checkoutClose");
-  const doneBtn = document.getElementById("checkoutDone");
-  const continueBtn = document.getElementById("checkoutContinue");
-  const placeOrderBtn = document.getElementById("placeOrderBtn");
-  const screenshotInput = document.getElementById("screenshotInput");
-  const restartBtn = document.getElementById("restartTimerBtn");
+  modal.style.display = 'flex';
+  showCheckoutStep1();
+}
 
-  document.addEventListener("click", async (e) => {
-    const btn = e.target.closest("[data-buy]");
-    if(!btn) return;
-    e.preventDefault();
-    await openModal(btn.getAttribute("data-buy"));
+function createCheckoutModal() {
+  const modal = document.createElement('div');
+  modal.id = 'checkout-modal';
+  modal.style.cssText = `
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease-out;
+  `;
+
+  modal.innerHTML = '<div id="checkout-content" style="background: #FBF6EC; border-radius: 16px; max-width: 480px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3);"></div>';
+
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      modal.style.display = 'none';
+    }
   });
 
-  closeBtn.addEventListener("click", closeModal);
-  doneBtn.addEventListener("click", closeModal);
-  overlay.addEventListener("click", (e) => { if(e.target === overlay) closeModal(); });
+  return modal;
+}
 
-  continueBtn.addEventListener("click", handleContinue);
-  placeOrderBtn.addEventListener("click", handlePlaceOrder);
-  restartBtn.addEventListener("click", () => goToStep(2, true));
+function showCheckoutStep1() {
+  const content = document.getElementById('checkout-content');
+  content.innerHTML = `
+    <div style="padding: 32px;">
+      <div style="margin-bottom: 24px;">
+        <h2 style="font-size: 1.5rem; color: #6B1A2A; margin-bottom: 8px;">${currentProduct.title}</h2>
+        <p style="color: #6B5F4F; font-size: 0.95rem;">${currentProduct.subject}</p>
+        <p style="font-size: 1.5rem; color: #6B1A2A; font-weight: 700; margin-top: 12px;">₹${currentProduct.price}</p>
+      </div>
+      <form id="contact-form" style="display: flex; flex-direction: column; gap: 16px;">
+        <div>
+          <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #2B2118;">Full Name *</label>
+          <input type="text" id="buyer-name" placeholder="Your full name" required style="width: 100%; padding: 12px; border: 2px solid #E5D9C7; border-radius: 8px; font-family: inherit; font-size: 1rem;">
+          <span class="error" style="color: #B23A2E; font-size: 0.85rem; display: none;"></span>
+        </div>
+        <div>
+          <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #2B2118;">Phone Number *</label>
+          <input type="tel" id="buyer-phone" placeholder="10-digit phone number" maxlength="10" required style="width: 100%; padding: 12px; border: 2px solid #E5D9C7; border-radius: 8px; font-family: inherit; font-size: 1rem;">
+          <span class="error" style="color: #B23A2E; font-size: 0.85rem; display: none;"></span>
+        </div>
+        <div>
+          <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #2B2118;">Email Address *</label>
+          <input type="email" id="buyer-email" placeholder="your.email@example.com" required style="width: 100%; padding: 12px; border: 2px solid #E5D9C7; border-radius: 8px; font-family: inherit; font-size: 1rem;">
+          <span class="error" style="color: #B23A2E; font-size: 0.85rem; display: none;"></span>
+        </div>
+        <button type="button" onclick="window.checkoutNext()" style="padding: 14px; background: linear-gradient(135deg, #6B1A2A 0%, #4A0F1C 100%); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 16px;">Continue → Payment</button>
+      </form>
+    </div>
+  `;
 
-  screenshotInput.addEventListener("change", async () => {
-    const file = screenshotInput.files[0];
-    if(!file) return;
-    screenshotBase64 = await compressImageToBase64(file, 700, 0.6);
-    document.getElementById("screenshotPreview").src = screenshotBase64;
-    document.getElementById("screenshotPreviewWrap").style.display = "block";
-    document.getElementById("f-screenshot")?.classList.remove("invalid");
-  });
+  window.checkoutNext = validateStep1;
+}
 
-  async function openModal(productId){
-    resetForm();
-    const snap = await getDoc(doc(db, "products", productId));
-    if(!snap.exists()) return;
-    currentProduct = { id: snap.id, ...snap.data() };
-    document.getElementById("checkoutProductLabel").textContent =
-      `${currentProduct.title} — ${formatINR(currentProduct.price)}`;
-    overlay.classList.add("open");
-    goToStep(1);
+function validateStep1() {
+  const name = document.getElementById('buyer-name');
+  const phone = document.getElementById('buyer-phone');
+  const email = document.getElementById('buyer-email');
+  let isValid = true;
+
+  // Validate name
+  if (!name.value.trim()) {
+    showError(name, 'Please enter your name');
+    isValid = false;
+  } else {
+    clearError(name);
   }
 
-  function closeModal(){
-    overlay.classList.remove("open");
-    if(countdownTimer) clearInterval(countdownTimer);
+  // Validate phone
+  if (!validatePhone(phone.value)) {
+    showError(phone, 'Enter valid 10-digit phone number');
+    isValid = false;
+  } else {
+    clearError(phone);
   }
 
-  function resetForm(){
-    ["buyerName","buyerPhone","buyerEmail"].forEach(id => document.getElementById(id).value = "");
-    ["f-name","f-phone","f-email"].forEach(id => document.getElementById(id).classList.remove("invalid"));
-    screenshotInput.value = "";
-    screenshotBase64 = null;
-    document.getElementById("screenshotPreviewWrap").style.display = "none";
-    document.getElementById("qrExpiredMsg").style.display = "none";
-    placeOrderBtn.style.display = "block";
+  // Validate email
+  if (!validateEmail(email.value)) {
+    showError(email, 'Enter valid email address');
+    isValid = false;
+  } else {
+    clearError(email);
   }
 
-  function handleContinue(){
-    const name = document.getElementById("buyerName").value.trim();
-    const phone = document.getElementById("buyerPhone").value.trim();
-    const email = document.getElementById("buyerEmail").value.trim();
-    let ok = true;
-    toggleInvalid("f-name", name.length < 2); if(name.length < 2) ok = false;
-    const phoneValid = /^[6-9]\d{9}$/.test(phone);
-    toggleInvalid("f-phone", !phoneValid); if(!phoneValid) ok = false;
-    const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    toggleInvalid("f-email", !emailValid); if(!emailValid) ok = false;
-    if(!ok) return;
-    goToStep(2, true);
+  if (isValid) {
+    orderData = {
+      buyerName: name.value,
+      buyerPhone: phone.value,
+      buyerEmail: email.value
+    };
+    currentStep = 2;
+    showCheckoutStep2();
+  }
+}
+
+function showError(input, message) {
+  input.style.borderColor = '#B23A2E';
+  const errorSpan = input.parentElement.querySelector('.error');
+  if (errorSpan) {
+    errorSpan.textContent = message;
+    errorSpan.style.display = 'block';
+  }
+}
+
+function clearError(input) {
+  input.style.borderColor = '#E5D9C7';
+  const errorSpan = input.parentElement.querySelector('.error');
+  if (errorSpan) {
+    errorSpan.style.display = 'none';
+  }
+}
+
+async function showCheckoutStep2() {
+  // Load payment QR from Firestore
+  const { doc, getDoc } = await import('https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js');
+  const paymentRef = doc(db, 'settings', 'payment');
+  const paymentSnap = await getDoc(paymentRef);
+
+  if (paymentSnap.exists()) {
+    paymentQRCode = paymentSnap.data().qrCodeImage;
   }
 
-  function toggleInvalid(fieldId, invalid){
-    document.getElementById(fieldId).classList.toggle("invalid", invalid);
-  }
+  const content = document.getElementById('checkout-content');
+  content.innerHTML = `
+    <div style="padding: 32px;">
+      <h2 style="font-size: 1.5rem; color: #6B1A2A; margin-bottom: 24px; text-align: center;">Step 2: Secure Payment</h2>
+      
+      <div style="background: white; padding: 24px; border-radius: 12px; border: 2px dashed #C9A227; margin-bottom: 24px; text-align: center;">
+        <p style="color: #6B5F4F; font-size: 0.9rem; margin-bottom: 16px; font-weight: 600;">Scan this QR with any UPI app to pay</p>
+        ${paymentQRCode ? `<img src="${paymentQRCode}" style="width: 100%; max-width: 280px; border-radius: 8px;">` : '<p>Loading QR code...</p>'}
+        <p style="color: #6B1A2A; font-size: 1.8rem; font-weight: 700; margin: 16px 0;">₹${currentProduct.price}</p>
+      </div>
 
-  async function goToStep(stepNum, startTimer = false){
-    document.querySelectorAll(".modal-step").forEach(s => s.classList.remove("active"));
-    document.querySelector(`.modal-step[data-step="${stepNum}"]`).classList.add("active");
+      <div style="background: #FFF8F0; padding: 12px; border-radius: 8px; margin-bottom: 24px;">
+        <p style="color: #B23A2E; font-weight: 600; font-size: 0.95rem;">⏱ Time remaining: <span id="timer">10:00</span></p>
+      </div>
 
-    if(stepNum === 2){
-      document.getElementById("qrAmount").textContent = formatINR(currentProduct.price);
-      document.getElementById("qrExpiredMsg").style.display = "none";
-      placeOrderBtn.style.display = "block";
-      if(startTimer){
-        const settingsSnap = await getDoc(doc(db, "settings", "payment"));
-        const qr = settingsSnap.exists() ? settingsSnap.data().qrCodeImage : "";
-        document.getElementById("qrImage").src = qr || "";
-        if(countdownTimer) clearInterval(countdownTimer);
-        countdownTimer = startCountdown(PAYMENT_WINDOW_SECONDS, document.getElementById("qrTimer"), () => {
-          document.getElementById("qrExpiredMsg").style.display = "block";
-          placeOrderBtn.style.display = "none";
-        });
-      }
+      <div style="margin-bottom: 24px;">
+        <label style="display: block; margin-bottom: 12px; font-weight: 600; color: #2B2118;">Upload Payment Screenshot *</label>
+        <input type="file" id="screenshot" accept="image/*" style="width: 100%; padding: 12px; border: 2px dashed #C9A227; border-radius: 8px; cursor: pointer;">
+        <div id="screenshot-preview" style="margin-top: 12px; display: none;">
+          <img id="preview-img" style="max-width: 100%; max-height: 200px; border-radius: 8px;">
+        </div>
+      </div>
+
+      <button type="button" id="place-order-btn" disabled onclick="window.placeOrder()" style="width: 100%; padding: 14px; background: linear-gradient(135deg, #6B1A2A 0%, #4A0F1C 100%); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; opacity: 0.5; margin-top: 16px;">Place Order</button>
+      
+      <p style="color: #6B5F4F; font-size: 0.85rem; margin-top: 16px; text-align: center; line-height: 1.6;">After payment verification, your PDF will be sent to <strong>${orderData.buyerEmail}</strong> within a few hours.</p>
+    </div>
+  `;
+
+  // Handle screenshot upload
+  const screenshotInput = document.getElementById('screenshot');
+  screenshotInput.addEventListener('change', handleScreenshotUpload);
+
+  // Start timer
+  startPaymentTimer();
+
+  window.placeOrder = submitOrder;
+}
+
+function handleScreenshotUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const preview = document.getElementById('screenshot-preview');
+  const previewImg = document.getElementById('preview-img');
+  const reader = new FileReader();
+
+  reader.onload = () => {
+    previewImg.src = reader.result;
+    preview.style.display = 'block';
+    document.getElementById('place-order-btn').disabled = false;
+    document.getElementById('place-order-btn').style.opacity = '1';
+  };
+
+  reader.readAsDataURL(file);
+}
+
+function startPaymentTimer() {
+  let seconds = 600; // 10 minutes
+
+  paymentTimer = setInterval(() => {
+    seconds--;
+    const minutes = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    document.getElementById('timer').textContent = `${minutes}:${secs.toString().padStart(2, '0')}`;
+
+    if (seconds <= 0) {
+      clearInterval(paymentTimer);
+      document.getElementById('place-order-btn').style.display = 'none';
+      document.getElementById('checkout-content').innerHTML += '<div style="padding: 24px; text-align: center; color: #B23A2E; font-weight: 600;">Payment time expired. Please refresh to get a new QR code.</div>';
     }
+  }, 1000);
+}
+
+async function submitOrder() {
+  const screenshotInput = document.getElementById('screenshot');
+  if (!screenshotInput.files[0]) {
+    showNotification('Please upload payment screenshot', 'error');
+    return;
   }
 
-  async function handlePlaceOrder(){
-    if(!screenshotBase64){
-      alert("Please upload your payment screenshot before placing the order.");
-      return;
-    }
-    placeOrderBtn.disabled = true;
-    placeOrderBtn.textContent = "Placing order...";
-    try{
-      await addDoc(collection(db, "orders"), {
-        productId: currentProduct.id,
-        productTitle: currentProduct.title,
-        amount: currentProduct.price,
-        buyerName: escapeHTML(document.getElementById("buyerName").value.trim()),
-        buyerPhone: document.getElementById("buyerPhone").value.trim(),
-        buyerEmail: document.getElementById("buyerEmail").value.trim(),
-        paymentScreenshot: screenshotBase64,
-        status: "pending",
-        createdAt: serverTimestamp()
-      });
-      if(countdownTimer) clearInterval(countdownTimer);
-      goToStep(3);
-    }catch(err){
-      alert("Something went wrong placing your order. Please try again.");
-      console.error(err);
-    }finally{
-      placeOrderBtn.disabled = false;
-      placeOrderBtn.textContent = "Place order";
-    }
+  // Compress screenshot
+  let compressedScreenshot;
+  try {
+    compressedScreenshot = await compressImage(screenshotInput.files[0]);
+  } catch (error) {
+    showNotification('Error processing screenshot', 'error');
+    return;
   }
+
+  // Save order to Firestore
+  try {
+    const orderRef = await addDoc(collection(db, 'orders'), {
+      productId: currentProduct.id,
+      productTitle: currentProduct.title,
+      amount: currentProduct.price,
+      buyerName: orderData.buyerName,
+      buyerPhone: orderData.buyerPhone,
+      buyerEmail: orderData.buyerEmail,
+      paymentScreenshot: compressedScreenshot,
+      status: 'pending',
+      statusNote: '',
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    });
+
+    clearInterval(paymentTimer);
+    showCheckoutStep3();
+  } catch (error) {
+    console.error('Error placing order:', error);
+    showNotification('Error placing order. Please try again.', 'error');
+  }
+}
+
+function showCheckoutStep3() {
+  const content = document.getElementById('checkout-content');
+  content.innerHTML = `
+    <div style="padding: 48px 32px; text-align: center;">
+      <div style="font-size: 4rem; margin-bottom: 24px; animation: scaleIn 0.5s ease-out;">✓</div>
+      <h2 style="font-size: 1.8rem; color: #2E7D4F; margin-bottom: 16px;">Order Placed Successfully!</h2>
+      <p style="color: #6B5F4F; font-size: 1.1rem; line-height: 1.8; margin-bottom: 32px;">Thank you for your purchase! We'll verify your payment and send your PDF notes to <strong>${orderData.buyerEmail}</strong> within a few hours.</p>
+      <button onclick="document.getElementById('checkout-modal').style.display='none';location.reload();" style="padding: 12px 32px; background: linear-gradient(135deg, #6B1A2A 0%, #4A0F1C 100%); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">Done</button>
+    </div>
+  `;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0); }
+  to { transform: scale(1); }
 }
