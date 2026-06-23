@@ -1,325 +1,571 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Notes Store - ShreeJi Notes</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./assets/css/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Store — ShreeJi Notes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
-    .store-header {
-      padding: 48px 24px;
-      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-      color: white;
-      border-bottom: 2px dashed var(--accent);
+    :root {
+      --maroon: #6B1A2A;
+      --maroon-dark: #4a1019;
+      --gold: #C9A227;
+      --magenta: #E01BB5;
+      --parchment: #F9F5EE;
+      --cream: #F2EDE4;
+      --text: #2C1810;
+      --text-light: #6B5E56;
+      --white: #FFFFFF;
+      --border: #E0D5C8;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: var(--parchment); color: var(--text); }
+
+    /* ── NAVBAR ── */
+    nav {
+      background: var(--white); border-bottom: 1px solid var(--border);
+      padding: 0 40px; display: flex; align-items: center; justify-content: space-between;
+      height: 64px; position: sticky; top: 0; z-index: 100;
+      box-shadow: 0 2px 8px rgba(107,26,42,0.06);
+    }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo-icon {
+      width: 36px; height: 36px; background: var(--maroon); border-radius: 8px;
+      display: flex; align-items: center; justify-content: center; color: var(--gold);
+      font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700;
+    }
+    .nav-logo-text { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--maroon); font-weight: 700; }
+    .nav-logo-sub { font-size: 9px; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.1em; }
+    .nav-links { display: flex; gap: 32px; list-style: none; }
+    .nav-links a { text-decoration: none; color: var(--text-light); font-size: 14px; font-weight: 500; transition: color 0.2s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--maroon); }
+    @media (max-width: 600px) {
+      nav { padding: 0 16px; }
+      .nav-links { gap: 16px; }
+      .nav-links a { font-size: 13px; }
     }
 
-    .store-header h1 {
-      color: white;
-      font-size: 2.5rem;
-      margin-bottom: 8px;
-    }
-
-    .store-controls {
-      background: white;
-      padding: 24px;
-      border-bottom: 1px solid var(--border);
-      position: sticky;
-      top: 70px;
-      z-index: 100;
-      display: flex;
-      gap: 20px;
-      align-items: center;
-      flex-wrap: wrap;
-      max-width: 1400px;
-      margin: 0 auto;
-    }
-
-    .search-box {
-      flex: 1;
-      min-width: 200px;
-      position: relative;
-    }
-
-    .search-box input {
-      width: 100%;
-      padding: 12px 16px;
-      border: 2px solid var(--border);
-      border-radius: 8px;
-      font-size: 1rem;
-    }
-
-    .search-box input:focus {
-      outline: none;
-      border-color: var(--primary);
-    }
-
-    .filters {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .filter-btn {
-      padding: 8px 16px;
-      background: var(--bg-secondary);
-      border: 2px solid var(--border);
-      border-radius: 20px;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 0.9rem;
-      transition: var(--transition);
-    }
-
-    .filter-btn.active {
-      background: var(--accent);
-      border-color: var(--accent);
-      color: var(--primary);
-    }
-
-    .filter-btn:hover {
-      border-color: var(--accent);
-    }
-
-    .sort-select {
-      padding: 8px 16px;
-      border: 2px solid var(--border);
-      border-radius: 8px;
-      background: white;
-      cursor: pointer;
-      font-weight: 600;
-    }
-
-    .store-content {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 48px 24px;
-    }
-
-    .empty-state {
+    /* ── STORE HEADER ── */
+    .store-hero {
+      background: var(--maroon); padding: 48px 40px 40px;
       text-align: center;
-      padding: 80px 24px;
+    }
+    .store-hero h1 {
+      font-family: 'Playfair Display', serif; font-size: 36px;
+      color: var(--gold); margin-bottom: 8px;
+    }
+    .store-hero p { color: rgba(255,255,255,0.75); font-size: 15px; }
+    @media (max-width: 600px) {
+      .store-hero { padding: 32px 16px; }
+      .store-hero h1 { font-size: 26px; }
     }
 
-    .empty-state-icon {
-      font-size: 4rem;
-      margin-bottom: 24px;
+    /* ── FILTERS ── */
+    .filter-section {
+      background: var(--white); border-bottom: 1px solid var(--border);
+      padding: 16px 40px; display: flex; align-items: center; gap: 10px;
+      flex-wrap: wrap;
+    }
+    .filter-label { font-size: 13px; font-weight: 600; color: var(--text-light); margin-right: 4px; }
+    .filter-chip {
+      padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 500;
+      cursor: pointer; border: 1.5px solid var(--border); background: var(--white);
+      color: var(--text-light); transition: all 0.2s;
+    }
+    .filter-chip:hover { border-color: var(--maroon); color: var(--maroon); }
+    .filter-chip.active { background: var(--maroon); color: var(--white); border-color: var(--maroon); }
+    @media (max-width: 600px) { .filter-section { padding: 12px 16px; } }
+
+    /* ── PRODUCTS GRID ── */
+    .store-main { max-width: 1200px; margin: 0 auto; padding: 40px 24px; }
+    .products-count { font-size: 13px; color: var(--text-light); margin-bottom: 24px; }
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 24px;
     }
 
-    .empty-state h2 {
-      font-size: 2rem;
-      margin-bottom: 12px;
+    /* ── PRODUCT CARD ── */
+    .product-card {
+      background: var(--white); border-radius: 14px; border: 1px solid var(--border);
+      overflow: hidden; transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer; text-decoration: none; color: inherit;
+      display: flex; flex-direction: column;
     }
+    .product-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(107,26,42,0.12); }
+    .card-thumb {
+      height: 140px; background: linear-gradient(135deg, var(--maroon) 0%, #9B2A3F 100%);
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+    }
+    .card-thumb::before {
+      content: ''; position: absolute; top: -20px; right: -20px;
+      width: 80px; height: 80px; border-radius: 50%;
+      background: rgba(201,162,39,0.2);
+    }
+    .card-thumb-icon { font-size: 40px; position: relative; z-index: 1; }
+    .card-subject-badge {
+      position: absolute; top: 10px; left: 10px;
+      background: rgba(201,162,39,0.9); color: var(--maroon-dark);
+      font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 12px;
+      text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .card-body { padding: 16px; flex: 1; display: flex; flex-direction: column; }
+    .card-year { font-size: 11px; color: var(--magenta); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+    .card-name { font-family: 'Playfair Display', serif; font-size: 16px; color: var(--text); font-weight: 600; margin-bottom: 6px; line-height: 1.3; flex: 1; }
+    .card-desc { font-size: 12px; color: var(--text-light); line-height: 1.5; margin-bottom: 12px; }
+    .card-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 12px; border-top: 1px solid var(--border); }
+    .card-price { display: flex; align-items: baseline; gap: 6px; }
+    .price-current { font-size: 20px; font-weight: 700; color: var(--maroon); }
+    .price-original { font-size: 13px; color: var(--text-light); text-decoration: line-through; }
+    .price-discount {
+      font-size: 10px; font-weight: 700; color: var(--success, #15803D);
+      background: #D1FAE5; padding: 2px 6px; border-radius: 10px;
+    }
+    .btn-buy {
+      background: var(--maroon); color: var(--white); border: none;
+      padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: background 0.2s; font-family: 'Inter', sans-serif;
+    }
+    .btn-buy:hover { background: var(--maroon-dark); }
 
-    .empty-state p {
-      color: var(--text-soft);
-      font-size: 1.1rem;
+    /* ── LOADING ── */
+    .loading-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 24px; }
+    .skeleton-card {
+      background: var(--white); border-radius: 14px; border: 1px solid var(--border); overflow: hidden;
     }
+    .skeleton { background: linear-gradient(90deg, var(--cream) 25%, var(--border) 50%, var(--cream) 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; }
+    .skeleton-thumb { height: 140px; }
+    .skeleton-body { padding: 16px; }
+    .skeleton-line { height: 12px; border-radius: 6px; margin-bottom: 10px; }
+    .skeleton-line.short { width: 60%; }
+    .skeleton-line.long { width: 90%; }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+    /* ── EMPTY ── */
+    .empty-state { text-align: center; padding: 80px 20px; color: var(--text-light); }
+    .empty-state .icon { font-size: 56px; margin-bottom: 16px; }
+    .empty-state h3 { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--maroon); margin-bottom: 8px; }
+    .empty-state p { font-size: 15px; }
+
+    /* ── BUY MODAL ── */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 1000;
+      display: none; align-items: center; justify-content: center; padding: 16px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--white); border-radius: 18px; padding: 32px;
+      max-width: 440px; width: 100%; box-shadow: 0 24px 48px rgba(0,0,0,0.25);
+      max-height: 90vh; overflow-y: auto;
+    }
+    .modal-title { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--maroon); margin-bottom: 4px; }
+    .modal-subtitle { font-size: 13px; color: var(--text-light); margin-bottom: 24px; }
+    .modal-price-row { display: flex; align-items: center; gap: 10px; margin-bottom: 24px; padding: 14px; background: var(--parchment); border-radius: 10px; }
+    .modal-price { font-size: 28px; font-weight: 700; color: var(--maroon); font-family: 'Playfair Display', serif; }
+    .modal-orig { font-size: 14px; color: var(--text-light); text-decoration: line-through; }
+    .modal-save { font-size: 12px; font-weight: 700; color: #15803D; background: #D1FAE5; padding: 3px 8px; border-radius: 10px; }
+    .upi-section { text-align: center; margin-bottom: 20px; }
+    .upi-title { font-size: 13px; font-weight: 600; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 12px; }
+    .upi-id-box {
+      background: var(--parchment); border: 1.5px dashed var(--gold);
+      border-radius: 10px; padding: 16px; font-size: 18px; font-weight: 700;
+      color: var(--maroon); letter-spacing: 0.05em; margin-bottom: 8px;
+    }
+    .upi-apps { display: flex; justify-content: center; gap: 16px; margin: 12px 0; font-size: 24px; }
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: 12px; font-weight: 600; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+    .form-group input {
+      width: 100%; padding: 10px 14px; border: 1.5px solid var(--border);
+      border-radius: 8px; font-size: 14px; font-family: 'Inter', sans-serif;
+      background: var(--parchment); color: var(--text); transition: border-color 0.2s;
+    }
+    .form-group input:focus { outline: none; border-color: var(--maroon); background: var(--white); }
+    .upload-label {
+      display: block; border: 2px dashed var(--border); border-radius: 8px;
+      padding: 20px; text-align: center; cursor: pointer; transition: border-color 0.2s;
+      background: var(--parchment);
+    }
+    .upload-label:hover { border-color: var(--gold); }
+    .upload-label .upload-icon { font-size: 28px; margin-bottom: 6px; }
+    .upload-label p { font-size: 13px; color: var(--text-light); }
+    .upload-preview { margin-top: 8px; border-radius: 8px; max-height: 150px; object-fit: contain; width: 100%; display: none; border: 1px solid var(--border); }
+    .btn-submit {
+      width: 100%; padding: 14px; background: var(--maroon); color: var(--white);
+      border: none; border-radius: 10px; font-size: 15px; font-weight: 700;
+      cursor: pointer; margin-top: 8px; font-family: 'Inter', sans-serif; transition: background 0.2s;
+    }
+    .btn-submit:hover { background: var(--maroon-dark); }
+    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn-cancel { width: 100%; padding: 10px; background: transparent; border: 1.5px solid var(--border); color: var(--text-light); border-radius: 10px; font-size: 14px; font-weight: 500; cursor: pointer; margin-top: 8px; font-family: 'Inter', sans-serif; transition: all 0.2s; }
+    .btn-cancel:hover { border-color: var(--maroon); color: var(--maroon); }
+    .success-box { text-align: center; padding: 24px 0; }
+    .success-box .success-icon { font-size: 56px; margin-bottom: 12px; }
+    .success-box h3 { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--maroon); margin-bottom: 8px; }
+    .success-box p { font-size: 14px; color: var(--text-light); line-height: 1.6; }
+
+    /* ── FOOTER ── */
+    footer { background: var(--maroon-dark); color: rgba(255,255,255,0.6); text-align: center; padding: 24px; font-size: 13px; margin-top: 60px; }
+    footer a { color: var(--gold); text-decoration: none; }
+
+    /* ── TOAST ── */
+    #toast {
+      position: fixed; bottom: 24px; right: 24px; padding: 14px 20px;
+      background: var(--maroon); color: var(--white); border-radius: 10px;
+      font-size: 14px; font-weight: 500; z-index: 9999;
+      transform: translateY(100px); opacity: 0; transition: all 0.3s;
+    }
+    #toast.show { transform: translateY(0); opacity: 1; }
+    #toast.success { background: #15803D; }
+    #toast.error { background: #DC2626; }
   </style>
 </head>
 <body>
-  <!-- Header -->
-  <header>
-    <div class="header-content">
-      <a href="./" class="logo">
-        <div class="logo-icon">📚</div>
-        <div class="logo-text">
-          <strong>ShreeJi</strong>
-          <small>NOTES</small>
-        </div>
-      </a>
-      <nav>
-        <ul>
-          <li><a href="./">Home</a></li>
-          <li><a href="./store.html" class="active">Store</a></li>
-          <li><a href="./about.html">About</a></li>
-          <li><a href="./faq.html">FAQ</a></li>
-          <li><a href="./contact.html">Contact</a></li>
-        </ul>
-      </nav>
-      <div class="header-actions">
-        <div class="cart-badge">🛒<span class="cart-count">0</span></div>
-        <button class="mobile-menu-btn">☰</button>
-      </div>
-    </div>
-  </header>
 
-  <!-- Store Header -->
-  <div class="store-header">
-    <h1>Notes Store</h1>
-    <p>All Study Materials — Browse by Subject & Year</p>
-  </div>
-
-  <!-- Store Controls -->
-  <div class="store-controls">
-    <div class="search-box">
-      <input type="text" id="search" placeholder="Search notes by title or subject...">
+<!-- NAVBAR -->
+<nav>
+  <a href="index.html" class="nav-logo">
+    <div class="nav-logo-icon">SJ</div>
+    <div>
+      <div class="nav-logo-text">ShreeJi Notes</div>
+      <div class="nav-logo-sub">shreejinotes.online</div>
     </div>
-    <div class="filters">
-      <button class="filter-btn active" data-filter="all">All</button>
-      <button class="filter-btn" data-filter="subject:Zoology">Zoology</button>
-      <button class="filter-btn" data-filter="subject:Botany">Botany</button>
-      <button class="filter-btn" data-filter="subject:Chemistry">Chemistry</button>
-      <button class="filter-btn" data-filter="year:1st Year">1st Year</button>
-      <button class="filter-btn" data-filter="year:2nd Year">2nd Year</button>
-      <button class="filter-btn" data-filter="year:3rd Year">3rd Year</button>
-    </div>
-    <select id="sort" class="sort-select">
-      <option value="latest">Latest First</option>
-      <option value="price-low">Price: Low to High</option>
-      <option value="price-high">Price: High to Low</option>
-      <option value="popular">Most Popular</option>
-    </select>
-  </div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="store.html" class="active">Store</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+</nav>
 
-  <!-- Store Content -->
-  <div class="store-content">
-    <div class="products-grid" id="products-container"></div>
-    <div class="empty-state" id="empty-state" style="display: none;">
-      <div class="empty-state-icon">📚</div>
-      <h2>No Notes Found</h2>
-      <p>Try adjusting your filters or search terms</p>
-    </div>
-  </div>
+<!-- STORE HERO -->
+<div class="store-hero">
+  <h1>📚 Notes Store</h1>
+  <p>MLSU syllabus ke anusaar — B.Sc. B.Ed. premium PDF notes</p>
+</div>
 
-  <!-- Footer -->
-  <footer>
-    <div class="footer-content">
-      <div class="footer-section">
-        <div class="logo" style="margin-bottom: 16px;">
-          <div class="logo-icon" style="background: var(--accent);">📚</div>
-          <div class="logo-text">
-            <strong style="color: white;">ShreeJi</strong>
-            <small style="color: var(--accent);">NOTES</small>
+<!-- FILTERS -->
+<div class="filter-section">
+  <span class="filter-label">Filter:</span>
+  <button class="filter-chip active" onclick="filterProducts('all', this)">All</button>
+  <button class="filter-chip" onclick="filterProducts('B.Sc. 1st Year', this)">B.Sc. 1st Year</button>
+  <button class="filter-chip" onclick="filterProducts('B.Sc. 2nd Year', this)">B.Sc. 2nd Year</button>
+  <button class="filter-chip" onclick="filterProducts('B.Sc. 3rd Year', this)">B.Sc. 3rd Year</button>
+  <button class="filter-chip" onclick="filterProducts('B.Ed. 1st Year', this)">B.Ed. 1st Year</button>
+  <button class="filter-chip" onclick="filterProducts('B.Ed. 2nd Year', this)">B.Ed. 2nd Year</button>
+</div>
+
+<!-- PRODUCTS -->
+<div class="store-main">
+  <div class="products-count" id="productsCount"></div>
+  <div id="productsGrid">
+    <!-- Skeleton loading -->
+    <div class="loading-grid">
+      ${[1,2,3,4,5,6].map(() => `
+        <div class="skeleton-card">
+          <div class="skeleton skeleton-thumb"></div>
+          <div class="skeleton-body">
+            <div class="skeleton skeleton-line short"></div>
+            <div class="skeleton skeleton-line long"></div>
+            <div class="skeleton skeleton-line long"></div>
+            <div class="skeleton skeleton-line short"></div>
           </div>
-        </div>
-        <p style="color: rgba(255,255,255,0.8);">Premium study notes for MLSU B.Sc. B.Ed. students.</p>
-      </div>
-      <div class="footer-section">
-        <h3>Quick Links</h3>
-        <ul>
-          <li><a href="./">Home</a></li>
-          <li><a href="./store.html">Notes Store</a></li>
-          <li><a href="./about.html">About Us</a></li>
-        </ul>
-      </div>
-      <div class="footer-section">
-        <h3>Support</h3>
-        <ul>
-          <li><a href="./contact.html">Contact Us</a></li>
-          <li><a href="./delivery-info.html">Delivery Info</a></li>
-          <li><a href="./refund-policy.html">Refund Policy</a></li>
-        </ul>
-      </div>
-      <div class="footer-section">
-        <h3>Legal</h3>
-        <ul>
-          <li><a href="./terms.html">Terms & Conditions</a></li>
-          <li><a href="./privacy-policy.html">Privacy Policy</a></li>
-          <li><a href="./disclaimer.html">Disclaimer</a></li>
-        </ul>
-      </div>
+        </div>`).join('')}
     </div>
-    <div class="footer-bottom">
-      <p>&copy; 2024 ShreeJi Notes. All rights reserved.</p>
-    </div>
-  </footer>
+  </div>
+</div>
 
-  <script type="module">
-    import { loadProducts, renderProductCard } from './assets/js/main.js';
-    import { initializeCheckout } from './assets/js/cart.js';
+<!-- BUY MODAL -->
+<div class="modal-overlay" id="buyModal">
+  <div class="modal">
+    <div id="buyModalContent"></div>
+  </div>
+</div>
 
-    let allProducts = [];
-    let activeFilter = 'all';
-    let activeSort = 'latest';
-    let searchTerm = '';
+<div id="toast"></div>
 
-    async function init() {
-      allProducts = await loadProducts();
-      renderProducts();
-      setupEventListeners();
+<footer>
+  © 2024 ShreeJi Notes · <a href="privacy-policy.html">Privacy Policy</a> · <a href="refund-policy.html">Refund Policy</a>
+</footer>
+
+<!-- FIREBASE -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, getDocs, addDoc, serverTimestamp }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getStorage, ref, uploadBytes, getDownloadURL }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAmHZqQwcFJEoSTLUww-zjsT42-8F19qCU",
+    authDomain: "shreejinotes.firebaseapp.com",
+    projectId: "shreejinotes",
+    storageBucket: "shreejinotes.firebasestorage.app",
+    messagingSenderId: "324031808978",
+    appId: "1:324031808978:web:3dccc6865566747b06f40b"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const storage = getStorage(app);
+
+  let allProducts = [];
+  let selectedProduct = null;
+  let screenshotBase64 = null;
+
+  // Subject to emoji map
+  const subjectEmoji = {
+    'Physics': '⚛️', 'Chemistry': '🧪', 'Math': '📐', 'Maths': '📐',
+    'Mathematics': '📐', 'Biology': '🌿', 'Botany': '🌱', 'Zoology': '🦋',
+    'Computer': '💻', 'English': '📖', 'Hindi': '📜', 'Education': '🎓',
+    'default': '📚'
+  };
+
+  function getEmoji(subject) {
+    for (const [key, val] of Object.entries(subjectEmoji)) {
+      if (subject && subject.toLowerCase().includes(key.toLowerCase())) return val;
+    }
+    return subjectEmoji.default;
+  }
+
+  function getDiscount(original, price) {
+    if (!original || !price || original <= price) return null;
+    return Math.round(((original - price) / original) * 100);
+  }
+
+  // ── LOAD PRODUCTS ──
+  async function loadProducts() {
+    try {
+      const snap = await getDocs(collection(db, 'products'));
+      allProducts = snap.docs
+        .map(d => ({ id: d.id, ...d.data() }))
+        .filter(p => p.active !== false);
+      renderProducts(allProducts);
+    } catch(e) {
+      document.getElementById('productsGrid').innerHTML = `
+        <div class="empty-state">
+          <div class="icon">⚠️</div>
+          <h3>Could not load products</h3>
+          <p>Please try refreshing the page.</p>
+        </div>`;
+    }
+  }
+
+  function renderProducts(products) {
+    const grid = document.getElementById('productsGrid');
+    const count = document.getElementById('productsCount');
+    count.textContent = `${products.length} notes available`;
+
+    if (!products.length) {
+      grid.innerHTML = `
+        <div class="empty-state">
+          <div class="icon">📭</div>
+          <h3>Abhi koi notes available nahi hain</h3>
+          <p>Jald hi naye notes add kiye jayenge. Wapas check karo!</p>
+        </div>`;
+      return;
     }
 
-    function setupEventListeners() {
-      document.getElementById('search').addEventListener('input', (e) => {
-        searchTerm = e.target.value.toLowerCase();
-        renderProducts();
-      });
+    grid.innerHTML = `<div class="products-grid">${products.map(p => {
+      const discount = getDiscount(p.originalPrice, p.price);
+      const emoji = getEmoji(p.subject);
+      return `
+        <div class="product-card" onclick="openBuyModal('${p.id}')">
+          <div class="card-thumb">
+            <div class="card-thumb-icon">${emoji}</div>
+            ${p.subject ? `<div class="card-subject-badge">${p.subject}</div>` : ''}
+          </div>
+          <div class="card-body">
+            ${p.year ? `<div class="card-year">${p.year}</div>` : ''}
+            <div class="card-name">${p.name || 'Notes'}</div>
+            ${p.description ? `<div class="card-desc">${p.description.slice(0, 70)}${p.description.length > 70 ? '...' : ''}</div>` : ''}
+            <div class="card-footer">
+              <div class="card-price">
+                <span class="price-current">₹${p.price || 49}</span>
+                ${p.originalPrice ? `<span class="price-original">₹${p.originalPrice}</span>` : ''}
+                ${discount ? `<span class="price-discount">${discount}% OFF</span>` : ''}
+              </div>
+              <button class="btn-buy" onclick="event.stopPropagation(); openBuyModal('${p.id}')">Buy Now</button>
+            </div>
+          </div>
+        </div>`;
+    }).join('')}</div>`;
+  }
 
-      document.querySelectorAll('[data-filter]').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          document.querySelectorAll('[data-filter]').forEach(b => b.classList.remove('active'));
-          e.target.classList.add('active');
-          activeFilter = e.target.dataset.filter;
-          renderProducts();
-        });
-      });
+  // ── FILTER ──
+  window.filterProducts = (year, el) => {
+    document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    const filtered = year === 'all' ? allProducts : allProducts.filter(p => p.year === year);
+    renderProducts(filtered);
+  };
 
-      document.getElementById('sort').addEventListener('change', (e) => {
-        activeSort = e.target.value;
-        renderProducts();
-      });
-    }
+  // ── BUY MODAL ──
+  window.openBuyModal = (id) => {
+    selectedProduct = allProducts.find(p => p.id === id);
+    if (!selectedProduct) return;
+    screenshotBase64 = null;
+    const p = selectedProduct;
+    const discount = getDiscount(p.originalPrice, p.price);
+    document.getElementById('buyModalContent').innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px">
+        <div class="modal-title">${p.name}</div>
+        <span onclick="closeBuyModal()" style="cursor:pointer;font-size:20px;color:var(--text-light);padding:4px">✕</span>
+      </div>
+      <div class="modal-subtitle">${p.year || ''} ${p.subject ? '· ' + p.subject : ''}</div>
 
-    function filterProducts() {
-      let filtered = allProducts;
+      <div class="modal-price-row">
+        <span class="modal-price">₹${p.price || 49}</span>
+        ${p.originalPrice ? `<span class="modal-orig">₹${p.originalPrice}</span>` : ''}
+        ${discount ? `<span class="modal-save">Save ${discount}%</span>` : ''}
+      </div>
 
-      // Filter by search term
-      if (searchTerm) {
-        filtered = filtered.filter(p => 
-          p.title.toLowerCase().includes(searchTerm) ||
-          p.subject.toLowerCase().includes(searchTerm)
-        );
+      <div class="upi-section">
+        <div class="upi-title">📲 Step 1: UPI se Payment Karo</div>
+        <div class="upi-id-box">shreejinotes@upi</div>
+        <div style="font-size:12px;color:var(--text-light);margin-bottom:6px">Ya is number pe GPay/PhonePe karo:</div>
+        <div class="upi-id-box" style="font-size:22px">9876543210</div>
+        <div class="upi-apps">📱💳🏦</div>
+        <div style="font-size:12px;color:var(--text-light)">Amount: <b>₹${p.price || 49}</b> — PhonePe / GPay / Paytm</div>
+      </div>
+
+      <div style="background:var(--parchment);border-radius:10px;padding:12px;margin-bottom:16px;font-size:13px;color:var(--text-light)">
+        ✅ Payment ke baad neeche screenshot upload karo aur apni details bharo.<br>
+        <b>2-4 ghante mein</b> PDF aapke WhatsApp/Email par milegi.
+      </div>
+
+      <div class="upi-title" style="text-align:left;margin-bottom:12px">📋 Step 2: Apni Details Bharo</div>
+
+      <div class="form-group">
+        <label>Naam *</label>
+        <input type="text" id="buyName" placeholder="Apna poora naam" />
+      </div>
+      <div class="form-group">
+        <label>Mobile / WhatsApp *</label>
+        <input type="tel" id="buyMobile" placeholder="10-digit mobile number" maxlength="10" />
+      </div>
+      <div class="form-group">
+        <label>Email (optional)</label>
+        <input type="email" id="buyEmail" placeholder="email@example.com" />
+      </div>
+      <div class="form-group">
+        <label>Payment Screenshot *</label>
+        <label class="upload-label" for="screenshotInput">
+          <div class="upload-icon">📷</div>
+          <p>Screenshot tap karke upload karo</p>
+        </label>
+        <input type="file" id="screenshotInput" accept="image/*" style="display:none" onchange="previewScreenshot(this)" />
+        <img id="screenshotPreview" class="upload-preview" />
+      </div>
+
+      <button class="btn-submit" id="submitOrderBtn" onclick="submitOrder()">
+        🛒 Order Submit Karo
+      </button>
+      <button class="btn-cancel" onclick="closeBuyModal()">Cancel</button>
+    `;
+    document.getElementById('buyModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  };
+
+  window.previewScreenshot = (input) => {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      screenshotBase64 = e.target.result;
+      const preview = document.getElementById('screenshotPreview');
+      preview.src = screenshotBase64;
+      preview.style.display = 'block';
+      document.querySelector('.upload-label p').textContent = '✅ ' + file.name;
+    };
+    reader.readAsDataURL(file);
+  };
+
+  window.submitOrder = async () => {
+    const name = document.getElementById('buyName').value.trim();
+    const mobile = document.getElementById('buyMobile').value.trim();
+    const email = document.getElementById('buyEmail').value.trim();
+
+    if (!name) { showToast('❌ Naam bharna zaroori hai', 'error'); return; }
+    if (!mobile || mobile.length !== 10) { showToast('❌ Sahi mobile number daalo', 'error'); return; }
+    if (!screenshotBase64) { showToast('❌ Payment screenshot upload karo', 'error'); return; }
+
+    const btn = document.getElementById('submitOrderBtn');
+    btn.disabled = true;
+    btn.textContent = '⏳ Submit ho raha hai...';
+
+    try {
+      // Upload screenshot to Firebase Storage
+      let screenshotUrl = screenshotBase64; // fallback: base64
+      try {
+        const blob = await fetch(screenshotBase64).then(r => r.blob());
+        const storageRef = ref(storage, `screenshots/${Date.now()}_${mobile}.jpg`);
+        await uploadBytes(storageRef, blob);
+        screenshotUrl = await getDownloadURL(storageRef);
+      } catch(e) {
+        // Storage upload fail → use base64 as fallback
+        console.log('Storage upload failed, using base64');
       }
 
-      // Filter by category/subject/year
-      if (activeFilter !== 'all') {
-        const [key, value] = activeFilter.split(':');
-        filtered = filtered.filter(p => p[key] === value);
-      }
-
-      return filtered;
-    }
-
-    function sortProducts(products) {
-      const sorted = [...products];
-      switch(activeSort) {
-        case 'price-low':
-          return sorted.sort((a, b) => a.price - b.price);
-        case 'price-high':
-          return sorted.sort((a, b) => b.price - a.price);
-        case 'popular':
-          return sorted.sort((a, b) => b.rating - a.rating);
-        case 'latest':
-        default:
-          return sorted.sort((a, b) => new Date(b.createdAt.toDate()) - new Date(a.createdAt.toDate()));
-      }
-    }
-
-    function renderProducts() {
-      const filtered = filterProducts();
-      const sorted = sortProducts(filtered);
-
-      const container = document.getElementById('products-container');
-      const emptyState = document.getElementById('empty-state');
-
-      if (sorted.length === 0) {
-        container.innerHTML = '';
-        emptyState.style.display = 'block';
-        return;
-      }
-
-      emptyState.style.display = 'none';
-      container.innerHTML = '';
-      sorted.forEach(product => {
-        container.appendChild(renderProductCard(product));
+      // Save order to Firestore
+      await addDoc(collection(db, 'orders'), {
+        customerName: name,
+        mobile: mobile,
+        email: email,
+        productId: selectedProduct.id,
+        productName: selectedProduct.name,
+        amount: selectedProduct.price || 49,
+        subject: selectedProduct.subject || '',
+        year: selectedProduct.year || '',
+        screenshotUrl: screenshotUrl,
+        status: 'pending',
+        createdAt: serverTimestamp()
       });
-      initializeCheckout();
-    }
 
-    init();
-  </script>
+      // Show success
+      document.getElementById('buyModalContent').innerHTML = `
+        <div class="success-box">
+          <div class="success-icon">🎉</div>
+          <h3>Order Submit Ho Gaya!</h3>
+          <p>
+            <b>${name}</b> ji, aapka order receive ho gaya hai.<br><br>
+            Hum payment verify karenge aur <b>2-4 ghante mein</b><br>
+            PDF aapke WhatsApp <b>${mobile}</b> par bhej denge.
+          </p>
+          <div style="margin-top:20px;padding:14px;background:var(--parchment);border-radius:10px;font-size:13px;color:var(--text-light)">
+            📞 Problem? WhatsApp karo: <b style="color:var(--maroon)">9876543210</b>
+          </div>
+          <button class="btn-submit" style="margin-top:20px" onclick="closeBuyModal()">Done ✓</button>
+        </div>`;
+    } catch(e) {
+      btn.disabled = false;
+      btn.textContent = '🛒 Order Submit Karo';
+      showToast('❌ Error hua, dobara try karo', 'error');
+    }
+  };
+
+  window.closeBuyModal = () => {
+    document.getElementById('buyModal').classList.remove('open');
+    document.body.style.overflow = '';
+  };
+
+  // Close on overlay click
+  document.getElementById('buyModal').addEventListener('click', e => {
+    if (e.target === document.getElementById('buyModal')) window.closeBuyModal();
+  });
+
+  // Toast
+  window.showToast = (msg, type='') => {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'show' + (type ? ' ' + type : '');
+    setTimeout(() => t.className = '', 3000);
+  };
+
+  // Init
+  loadProducts();
+</script>
 </body>
 </html>
