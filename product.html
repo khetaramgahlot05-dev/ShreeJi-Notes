@@ -1,430 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Product Details - ShreeJi Notes</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./assets/css/style.css">
-  <style>
-    .breadcrumb {
-      padding: 16px 24px;
-      background: white;
-      border-bottom: 1px solid var(--border);
-      max-width: 1400px;
-      margin: 0 auto;
-    }
-
-    .breadcrumb a {
-      color: var(--primary);
-      font-weight: 600;
-    }
-
-    .product-detail {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 48px 24px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 48px;
-    }
-
-    .product-gallery {
-      position: relative;
-    }
-
-    .product-image-main {
-      width: 100%;
-      height: 400px;
-      background: linear-gradient(135deg, var(--accent-light) 0%, var(--bg-secondary) 100%);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 8rem;
-      margin-bottom: 16px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .product-image-main::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: repeating-linear-gradient(
-        45deg,
-        transparent,
-        transparent 10px,
-        rgba(201, 162, 39, 0.05) 10px,
-        rgba(201, 162, 39, 0.05) 20px
-      );
-    }
-
-    .product-badge {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      background: linear-gradient(135deg, var(--highlight) 0%, #D1158A 100%);
-      color: white;
-      padding: 10px 16px;
-      border-radius: 20px;
-      font-weight: 700;
-      z-index: 2;
-    }
-
-    .product-info {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .product-category {
-      font-size: 0.85rem;
-      color: var(--accent);
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 12px;
-    }
-
-    .product-title {
-      font-size: 2.5rem;
-      color: var(--primary);
-      margin-bottom: 16px;
-      line-height: 1.2;
-    }
-
-    .product-rating {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 24px;
-      font-weight: 600;
-    }
-
-    .rating-stars {
-      color: var(--accent);
-      font-size: 1.2rem;
-      letter-spacing: 2px;
-    }
-
-    .rating-count {
-      color: var(--text-soft);
-      font-size: 0.95rem;
-    }
-
-    .price-section {
-      padding: 24px;
-      background: var(--bg-secondary);
-      border-radius: 12px;
-      border: 2px dashed var(--accent);
-      margin-bottom: 24px;
-    }
-
-    .price-original {
-      text-decoration: line-through;
-      color: var(--text-soft);
-      font-size: 1.1rem;
-      margin-bottom: 8px;
-    }
-
-    .price-current {
-      font-size: 2.5rem;
-      font-weight: 700;
-      color: var(--primary);
-      margin-bottom: 8px;
-    }
-
-    .price-discount {
-      display: inline-block;
-      background: var(--danger);
-      color: white;
-      padding: 6px 12px;
-      border-radius: 6px;
-      font-weight: 700;
-      font-size: 0.95rem;
-      margin-bottom: 12px;
-    }
-
-    .limited-offer {
-      background: #FFE5E5;
-      color: var(--danger);
-      padding: 12px;
-      border-radius: 8px;
-      font-weight: 600;
-      text-align: center;
-    }
-
-    .product-actions {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 32px;
-    }
-
-    .product-actions button {
-      flex: 1;
-      padding: 16px;
-      border-radius: 8px;
-      font-weight: 600;
-      font-size: 1rem;
-    }
-
-    .highlights {
-      margin-bottom: 32px;
-    }
-
-    .highlights h3 {
-      font-size: 1.3rem;
-      margin-bottom: 16px;
-      color: var(--primary);
-    }
-
-    .highlights-list {
-      list-style: none;
-    }
-
-    .highlights-list li {
-      padding: 12px 0;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .highlights-list li::before {
-      content: '✓';
-      color: var(--success);
-      font-weight: bold;
-      font-size: 1.2rem;
-    }
-
-    .description {
-      margin-bottom: 32px;
-      line-height: 1.8;
-      color: var(--text-soft);
-    }
-
-    .trust-badges {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-    }
-
-    .trust-badge {
-      background: var(--bg-secondary);
-      padding: 16px;
-      border-radius: 8px;
-      text-align: center;
-      font-weight: 600;
-      font-size: 0.9rem;
-      border-left: 4px solid var(--accent);
-    }
-
-    @media (max-width: 768px) {
-      .product-detail {
-        grid-template-columns: 1fr;
-        gap: 24px;
-      }
-
-      .product-title {
-        font-size: 1.8rem;
-      }
-
-      .price-current {
-        font-size: 1.8rem;
-      }
-
-      .product-actions {
-        flex-direction: column;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details - ShreeJi Notes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Header -->
-  <header>
-    <div class="header-content">
-      <a href="./" class="logo">
-        <div class="logo-icon">📚</div>
-        <div class="logo-text">
-          <strong>ShreeJi</strong>
-          <small>NOTES</small>
+
+    <div class="main-wrapper">
+        
+        <!-- Header -->
+        <header class="navbar">
+            <div class="logo">
+                <i class="fas fa-chart-line icon-logo"></i> SHREEJI NOTES
+            </div>
+            <nav class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="index.html#products" class="active">Products</a>
+                <a href="index.html#about">About</a>
+            </nav>
+            <div class="nav-actions">
+                <a href="#" class="cart-icon"><i class="fas fa-shopping-cart"></i></a>
+            </div>
+        </header>
+
+        <div class="breadcrumb-nav">
+            <a href="index.html">Home</a> / <a href="index.html#products">Products</a> / <span>Zoology Notes</span>
         </div>
-      </a>
-      <nav>
-        <ul>
-          <li><a href="./">Home</a></li>
-          <li><a href="./store.html">Store</a></li>
-          <li><a href="./about.html">About</a></li>
-          <li><a href="./faq.html">FAQ</a></li>
-          <li><a href="./contact.html">Contact</a></li>
-        </ul>
-      </nav>
-      <div class="header-actions">
-        <div class="cart-badge">🛒<span class="cart-count">0</span></div>
-        <button class="mobile-menu-btn">☰</button>
-      </div>
-    </div>
-  </header>
 
-  <!-- Breadcrumb -->
-  <div class="breadcrumb">
-    <a href="./">Home</a> > <a href="./store.html">Store</a> > <span id="product-name">Product</span>
-  </div>
+        <!-- Dedicated Product View -->
+        <div class="product-page-layout">
+            
+            <!-- Left Side: Interactive Gallery -->
+            <div class="product-gallery">
+                <div class="main-image-container">
+                    <span class="discount-pill">83% OFF</span>
+                    <img id="main-product-img" src="a875079c-c23f-4c07-917e-b84aebb0e467.jpg" alt="Main Product Image">
+                </div>
+                <div class="thumbnail-row">
+                    <div class="thumb active" onclick="switchImage('a875079c-c23f-4c07-917e-b84aebb0e467.jpg', this)">
+                        <img src="a875079c-c23f-4c07-917e-b84aebb0e467.jpg" alt="Thumb 1">
+                    </div>
+                    <div class="thumb" onclick="switchImage('aedba44f-73fb-4d24-a694-fe04cc70637d.jpg', this)">
+                        <img src="aedba44f-73fb-4d24-a694-fe04cc70637d.jpg" alt="Thumb 2">
+                    </div>
+                    <div class="thumb" onclick="switchImage('12.jpg', this)">
+                        <img src="12.jpg" alt="Thumb 3">
+                    </div>
+                </div>
+            </div>
 
-  <!-- Product Detail -->
-  <div class="product-detail">
-    <div class="product-gallery">
-      <div class="product-image-main" id="product-image">📚</div>
-    </div>
-    <div class="product-info">
-      <div class="product-category" id="product-category">Category</div>
-      <h1 class="product-title" id="product-title">Product Title</h1>
-      
-      <div class="product-rating">
-        <span class="rating-stars" id="product-rating">★★★★★</span>
-        <span class="rating-count" id="rating-count">(0 ratings)</span>
-      </div>
+            <!-- Right Side: Details & Buy Logic -->
+            <div class="product-details-panel">
+                <h1 class="product-title">MLSU B.Sc. B.Ed 2nd Year Notes (All Papers)</h1>
+                <p class="product-desc">Access well-organized study notes designed strictly according to the latest MLSU syllabus. Covers important topics in a clear, student-friendly format with diagrams and summaries.</p>
+                
+                <div class="rating">
+                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                    <span>(4.8 / 245 Reviews)</span>
+                </div>
 
-      <div class="price-section">
-        <div class="price-original" id="product-mrp">₹299</div>
-        <div class="price-current" id="product-price">₹49</div>
-        <div class="price-discount" id="discount-badge">-84%</div>
-        <div class="limited-offer">⏰ Limited Time Offer</div>
-      </div>
+                <div class="pricing-block">
+                    <span class="current-price">₹49</span>
+                    <span class="original-price">₹299</span>
+                </div>
 
-      <div class="product-actions">
-        <button class="btn btn-outline" id="add-cart">Add to Cart</button>
-        <button class="btn btn-primary" id="buy-now">Buy Now at ₹49</button>
-      </div>
+                <div class="feature-list">
+                    <p><i class="fas fa-check"></i> Unit-Wise Organized Material</p>
+                    <p><i class="fas fa-check"></i> Instant PDF Download</p>
+                    <p><i class="fas fa-check"></i> High Quality Print Ready</p>
+                </div>
 
-      <div class="highlights">
-        <h3>What You Get</h3>
-        <ul class="highlights-list" id="highlights"></ul>
-      </div>
+                <!-- Premium Payment Button -->
+                <div class="buy-section">
+                    <a href="https://rzp.io/rzp/Bux5UjC" target="_blank" class="btn btn-buy-now">
+                        Buy Now via UPI / Card <i class="fas fa-arrow-right"></i>
+                    </a>
+                    <div class="payment-icons">
+                        <i class="fab fa-google-pay"></i>
+                        <span>PhonePe</span>
+                        <span>Paytm</span>
+                        <span>UPI</span>
+                    </div>
+                </div>
 
-      <div class="description">
-        <h3 style="color: var(--primary); margin-bottom: 12px;">About These Notes</h3>
-        <p id="product-description">Description will appear here</p>
-      </div>
+                <div class="secure-checkout">
+                    <i class="fas fa-lock"></i> Guaranteed Safe & Secure Checkout via Razorpay
+                </div>
+            </div>
 
-      <div class="trust-badges">
-        <div class="trust-badge">⚡ Instant Access</div>
-        <div class="trust-badge">🔒 Secure Payment</div>
-        <div class="trust-badge">📱 All Devices</div>
-        <div class="trust-badge">↩ Easy Refund</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Footer -->
-  <footer>
-    <div class="footer-content">
-      <div class="footer-section">
-        <div class="logo" style="margin-bottom: 16px;">
-          <div class="logo-icon" style="background: var(--accent);">📚</div>
-          <div class="logo-text">
-            <strong style="color: white;">ShreeJi</strong>
-            <small style="color: var(--accent);">NOTES</small>
-          </div>
         </div>
-        <p style="color: rgba(255,255,255,0.8);">Premium study notes for MLSU B.Sc. B.Ed. students.</p>
-      </div>
-      <div class="footer-section">
-        <h3>Quick Links</h3>
-        <ul>
-          <li><a href="./">Home</a></li>
-          <li><a href="./store.html">Notes Store</a></li>
-          <li><a href="./about.html">About Us</a></li>
-        </ul>
-      </div>
-      <div class="footer-section">
-        <h3>Support</h3>
-        <ul>
-          <li><a href="./contact.html">Contact Us</a></li>
-          <li><a href="./delivery-info.html">Delivery Info</a></li>
-          <li><a href="./refund-policy.html">Refund Policy</a></li>
-        </ul>
-      </div>
-      <div class="footer-section">
-        <h3>Legal</h3>
-        <ul>
-          <li><a href="./terms.html">Terms & Conditions</a></li>
-          <li><a href="./privacy-policy.html">Privacy Policy</a></li>
-          <li><a href="./disclaimer.html">Disclaimer</a></li>
-        </ul>
-      </div>
+
     </div>
-    <div class="footer-bottom">
-      <p>&copy; 2024 ShreeJi Notes. All rights reserved.</p>
-    </div>
-  </footer>
 
-  <script type="module">
-    import { calculateDiscount, showNotification } from './assets/js/main.js';
-    import { initializeCheckout } from './assets/js/cart.js';
-    import { db } from './assets/js/firebase-config.js';
-    import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js';
-
-    async function loadProduct() {
-      const params = new URLSearchParams(window.location.search);
-      const productId = params.get('id');
-
-      if (!productId) {
-        showNotification('Product not found', 'error');
-        return;
-      }
-
-      try {
-        const productRef = doc(db, 'products', productId);
-        const productSnap = await getDoc(productRef);
-
-        if (!productSnap.exists()) {
-          showNotification('Product not found', 'error');
-          return;
-        }
-
-        const product = productSnap.data();
-        const discount = calculateDiscount(product.mrp, product.price);
-
-        // Update page content
-        document.getElementById('product-name').textContent = product.title;
-        document.getElementById('product-category').textContent = `${product.subject} • ${product.year}`;
-        document.getElementById('product-title').textContent = product.title;
-        document.getElementById('product-rating').textContent = '★'.repeat(Math.round(product.rating));
-        document.getElementById('rating-count').textContent = `(${product.reviewCount} ratings)`;
-        document.getElementById('product-mrp').textContent = `₹${product.mrp}`;
-        document.getElementById('product-price').textContent = `₹${product.price}`;
-        document.getElementById('discount-badge').textContent = `-${discount}%`;
-        document.getElementById('product-description').textContent = product.description;
-        document.getElementById('buy-now').textContent = `Buy Now at ₹${product.price}`;
-
-        // Highlights
-        const highlightsList = document.getElementById('highlights');
-        product.highlights.forEach(highlight => {
-          const li = document.createElement('li');
-          li.textContent = highlight;
-          highlightsList.appendChild(li);
-        });
-
-        // Event listeners
-        document.getElementById('buy-now').dataset.buy = productId;
-        document.getElementById('add-cart').addEventListener('click', () => {
-          showNotification('Added to cart!', 'success');
-        });
-
-        initializeCheckout();
-      } catch (error) {
-        console.error('Error loading product:', error);
-        showNotification('Error loading product', 'error');
-      }
-    }
-
-    loadProduct();
-  </script>
+    <script src="script.js"></script>
 </body>
 </html>
