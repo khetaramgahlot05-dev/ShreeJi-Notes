@@ -1,257 +1,175 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ShreeJi Notes - Study Smart. Score Higher.</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./assets/css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShreeJi Notes - Elevate Your Learning</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-  <!-- Header -->
-  <header>
-    <div class="header-content">
-      <a href="./" class="logo">
-        <div class="logo-icon">📚</div>
-        <div class="logo-text">
-          <strong>ShreeJi</strong>
-          <small>NOTES</small>
+
+    <!-- Top Banner -->
+    <div class="top-banner">
+        <p>Sign up and GET 20% OFF for your first order. <a href="#">Sign up now</a></p>
+    </div>
+
+    <!-- Header Navigation -->
+    <header class="navbar">
+        <div class="logo">
+            <i class="fas fa-book-open"></i> ShreeJi Notes
         </div>
-      </a>
-      <nav>
-        <ul>
-          <li><a href="./" class="active">Home</a></li>
-          <li><a href="./store.html">Store</a></li>
-          <li><a href="./about.html">About</a></li>
-          <li><a href="./faq.html">FAQ</a></li>
-          <li><a href="./contact.html">Contact</a></li>
-        </ul>
-      </nav>
-      <div class="header-actions">
-        <div class="cart-badge">🛒<span class="cart-count">0</span></div>
-        <button class="mobile-menu-btn">☰</button>
-      </div>
-    </div>
-  </header>
-
-  <!-- Hero Section -->
-  <section class="hero">
-    <div class="hero-content">
-      <div class="hero-books">
-        <div class="book"></div>
-        <div class="book"></div>
-        <div class="book"></div>
-      </div>
-      <h1>Study Smart.<br>Score Higher.</h1>
-      <p>Premium PDF study notes aligned with MLSU syllabus. Get instant access to unit-wise organized, exam-focused notes created by top students.</p>
-      <div class="hero-stats">
-        <div class="stat">
-          <div class="stat-value">1000+</div>
-          <div class="stat-label">Notes Downloaded</div>
+        <nav class="nav-links">
+            <a href="index.html" class="active">Home</a>
+            <a href="#products">Notes</a>
+            <a href="#categories">Categories</a>
+            <a href="#">About Us</a>
+            <a href="#">Blogs</a>
+        </nav>
+        <div class="nav-icons">
+            <i class="fas fa-search"></i>
+            <i class="fas fa-heart"></i>
+            <a href="checkout.html" style="color: inherit;"><i class="fas fa-shopping-bag"></i></a>
+            <i class="fas fa-user"></i>
         </div>
-        <div class="stat">
-          <div class="stat-value">4.8★</div>
-          <div class="stat-label">Average Rating</div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1>Elevate Your Learning Journey</h1>
+            <p>Experience education in its purest form. High-quality premium notes designed to boost your academic and professional success.</p>
+            <div class="hero-buttons">
+                <a href="#products" class="btn btn-primary">Shop Now</a>
+                <a href="#" class="btn btn-secondary">Learn More</a>
+            </div>
         </div>
-        <div class="stat">
-          <div class="stat-value">24hrs</div>
-          <div class="stat-label">Fast Delivery</div>
+    </section>
+
+    <!-- Categories Section -->
+    <section id="categories" class="section-padding">
+        <h2 class="section-title">Shop By Category</h2>
+        <div class="grid grid-3">
+            <div class="category-card">
+                <h3>Engineering Notes</h3>
+                <p>Comprehensive technical guides and derivations.</p>
+                <a href="#products">View Collection <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="category-card">
+                <h3>Medical Science</h3>
+                <p>Detailed diagrams and conceptual anatomy notes.</p>
+                <a href="#products">View Collection <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="category-card">
+                <h3>Competitive Exams</h3>
+                <p>Short-tricks, formulas, and previous year crisp analysis.</p>
+                <a href="#products">View Collection <i class="fas fa-arrow-right"></i></a>
+            </div>
         </div>
-      </div>
-      <div class="hero-ctas">
-        <button class="btn btn-primary" onclick="location.href='store.html'">Browse Notes Store</button>
-        <button class="btn btn-outline" onclick="document.querySelector('.steps-section').scrollIntoView()">How It Works</button>
-      </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- Trust Bar -->
-  <div class="trust-bar">
-    <div class="trust-items">
-      <div class="trust-item">MLSU Syllabus Based</div>
-      <div class="trust-item">Instant PDF Access</div>
-      <div class="trust-item">Secure UPI Payment</div>
-      <div class="trust-item">Exam Focused Notes</div>
-    </div>
-  </div>
-
-  <!-- Featured Products -->
-  <section id="featured">
-    <h2>Best Selling Notes</h2>
-    <p>Handpicked premium notes trusted by 1000+ students</p>
-    <div class="products-grid" id="featured-products"></div>
-  </section>
-
-  <!-- How It Works -->
-  <section class="steps-section">
-    <h2>How It Works</h2>
-    <p>Simple 4-step process to get your notes</p>
-    <div class="steps-grid">
-      <div class="step">
-        <div class="step-icon">📚</div>
-        <h3 class="step-title">Pick Your Notes</h3>
-        <p class="step-desc">Browse our collection of unit-wise organized PDF notes for all subjects and years</p>
-      </div>
-      <div class="step">
-        <div class="step-icon">💳</div>
-        <h3 class="step-title">Scan & Pay</h3>
-        <p class="step-desc">Scan the QR code with any UPI app and complete the secure payment in seconds</p>
-      </div>
-      <div class="step">
-        <div class="step-icon">📱</div>
-        <h3 class="step-title">Upload Screenshot</h3>
-        <p class="step-desc">Upload your payment screenshot. Our team verifies it within a few hours</p>
-      </div>
-      <div class="step">
-        <div class="step-icon">⬇️</div>
-        <h3 class="step-title">Get PDF</h3>
-        <p class="step-desc">Receive the PDF download link via email. Works on all devices instantly</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Subjects -->
-  <section>
-    <h2>Browse by Subject</h2>
-    <p>Filter notes by subject, year, and difficulty level</p>
-    <div class="subjects-chips">
-      <button class="subject-chip" onclick="location.href='store.html?subject=Zoology'">🔬 Zoology</button>
-      <button class="subject-chip" onclick="location.href='store.html?subject=Botany'">🌿 Botany</button>
-      <button class="subject-chip" onclick="location.href='store.html?subject=Chemistry'">⚗️ Chemistry</button>
-      <button class="subject-chip" onclick="location.href='store.html?year=1st%20Year'">📖 1st Year</button>
-      <button class="subject-chip" onclick="location.href='store.html?year=2nd%20Year'">📖 2nd Year</button>
-      <button class="subject-chip" onclick="location.href='store.html?year=3rd%20Year'">📖 3rd Year</button>
-    </div>
-  </section>
-
-  <!-- Testimonials -->
-  <section>
-    <h2>What Students Say</h2>
-    <p>Join 1000+ satisfied students from MLSU</p>
-    <div class="testimonials-grid">
-      <div class="testimonial">
-        <div class="testimonial-stars">★★★★★</div>
-        <p class="testimonial-text">"ShreeJi Notes saved my semester! The notes are so well-organized and exactly match the MLSU syllabus. I scored 95% in Zoology thanks to these!"</p>
-        <p class="testimonial-author">Priya Sharma</p>
-        <p class="testimonial-college">MLSU, Rajasthan</p>
-      </div>
-      <div class="testimonial">
-        <div class="testimonial-stars">★★★★★</div>
-        <p class="testimonial-text">"Best investment for my studies. The unit-wise breakdown makes it so easy to understand complex topics. Highly recommended for all B.Sc. students!"</p>
-        <p class="testimonial-author">Rahul Patel</p>
-        <p class="testimonial-college">MLSU, Rajasthan</p>
-      </div>
-      <div class="testimonial">
-        <div class="testimonial-stars">★★★★★</div>
-        <p class="testimonial-text">"Quick delivery, excellent quality, and affordable prices. The payment process is so smooth. Definitely buying more notes for my finals!"</p>
-        <p class="testimonial-author">Ananya Gupta</p>
-        <p class="testimonial-college">MLSU, Rajasthan</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Why ShreeJi Notes -->
-  <section>
-    <h2>Why ShreeJi Notes?</h2>
-    <p>Everything you need to ace your exams</p>
-    <div class="features-grid">
-      <div class="feature">
-        <div class="feature-icon">📋</div>
-        <h3 class="feature-title">Unit-wise Organized</h3>
-        <p class="feature-desc">Complete notes organized by units as per MLSU syllabus for easy revision</p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">✓</div>
-        <h3 class="feature-title">Exam Focused</h3>
-        <p class="feature-desc">Created by top-scoring students - every line is exam-relevant and important</p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">📱</div>
-        <h3 class="feature-title">Mobile Friendly</h3>
-        <p class="feature-desc">PDFs work perfectly on all devices - study anywhere, anytime at your pace</p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">⚡</div>
-        <h3 class="feature-title">Instant Access</h3>
-        <p class="feature-desc">Payment verified within hours. Download your notes immediately and start studying</p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">💰</div>
-        <h3 class="feature-title">Affordable Price</h3>
-        <p class="feature-desc">Premium quality notes at just ₹49-499. No hidden charges, 100% transparent pricing</p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">🔒</div>
-        <h3 class="feature-title">Secure Payment</h3>
-        <p class="feature-desc">100% secure UPI payment gateway. Your data is encrypted and protected</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer>
-    <div class="footer-content">
-      <div class="footer-section">
-        <div class="logo" style="margin-bottom: 16px;">
-          <div class="logo-icon" style="background: var(--accent);">📚</div>
-          <div class="logo-text">
-            <strong style="color: white;">ShreeJi</strong>
-            <small style="color: var(--accent);">NOTES</small>
-          </div>
+    <!-- Featured Products Section -->
+    <section id="products" class="section-padding light-bg">
+        <h2 class="section-title">Featured Material</h2>
+        <div class="grid grid-4">
+            <!-- Product 1 -->
+            <div class="product-card">
+                <div class="product-img-placeholder">
+                    <i class="fas fa-file-pdf fa-3x"></i>
+                </div>
+                <div class="product-info">
+                    <span class="category-tag">Engineering</span>
+                    <h3>Data Structures & Algorithms</h3>
+                    <p class="price">$24.99 <span class="old-price">$49.00</span></p>
+                    <a href="product-detail.html" class="add-to-cart-btn">View Details</a>
+                </div>
+            </div>
+            <!-- Product 2 -->
+            <div class="product-card">
+                <div class="product-img-placeholder">
+                    <i class="fas fa-file-pdf fa-3x"></i>
+                </div>
+                <div class="product-info">
+                    <span class="category-tag">Medical</span>
+                    <h3>Human Anatomy & Physiology</h3>
+                    <p class="price">$48.00 <span class="old-price">$60.00</span></p>
+                    <a href="product-detail.html" class="add-to-cart-btn">View Details</a>
+                </div>
+            </div>
+            <!-- Product 3 -->
+            <div class="product-card">
+                <div class="product-img-placeholder">
+                    <i class="fas fa-file-pdf fa-3x"></i>
+                </div>
+                <div class="product-info">
+                    <span class="category-tag">Upsc</span>
+                    <h3>Indian Polity Complete Notes</h3>
+                    <p class="price">$19.99 <span class="old-price">$35.00</span></p>
+                    <a href="product-detail.html" class="add-to-cart-btn">View Details</a>
+                </div>
+            </div>
+            <!-- Product 4 -->
+            <div class="product-card">
+                <div class="product-img-placeholder">
+                    <i class="fas fa-file-pdf fa-3x"></i>
+                </div>
+                <div class="product-info">
+                    <span class="category-tag">Management</span>
+                    <h3>Macroeconomics & Finance</h3>
+                    <p class="price">$15.00 <span class="old-price">$30.00</span></p>
+                    <a href="product-detail.html" class="add-to-cart-btn">View Details</a>
+                </div>
+            </div>
         </div>
-        <p style="color: rgba(255,255,255,0.8);">Premium study notes for MLSU B.Sc. B.Ed. students. Study Smart. Score Higher.</p>
-      </div>
-      <div class="footer-section">
-        <h3>Quick Links</h3>
-        <ul>
-          <li><a href="./">Home</a></li>
-          <li><a href="./store.html">Notes Store</a></li>
-          <li><a href="./about.html">About Us</a></li>
-          <li><a href="./faq.html">FAQ</a></li>
-        </ul>
-      </div>
-      <div class="footer-section">
-        <h3>Support</h3>
-        <ul>
-          <li><a href="./contact.html">Contact Us</a></li>
-          <li><a href="./delivery-info.html">Delivery Info</a></li>
-          <li><a href="./refund-policy.html">Refund Policy</a></li>
-        </ul>
-      </div>
-      <div class="footer-section">
-        <h3>Legal</h3>
-        <ul>
-          <li><a href="./terms.html">Terms & Conditions</a></li>
-          <li><a href="./privacy-policy.html">Privacy Policy</a></li>
-          <li><a href="./disclaimer.html">Disclaimer</a></li>
-        </ul>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <p>&copy; 2024 ShreeJi Notes. All rights reserved. | MLSU Exam Focused Study Notes | Powered by Kheta Ram</p>
-    </div>
-  </footer>
+    </section>
 
-  <script type="module">
-    import { loadProducts, renderProductCard, formatCurrency, calculateDiscount } from './assets/js/main.js';
-    import { initializeCheckout } from './assets/js/cart.js';
+    <!-- Trust Badges -->
+    <section class="trust-badges section-padding">
+        <div class="badge-item">
+            <i class="fas fa-shipping-fast"></i>
+            <h4>Instant Delivery</h4>
+            <p>Get immediate download access after payment.</p>
+        </div>
+        <div class="badge-item">
+            <i class="fas fa-shield-alt"></i>
+            <h4>Secure Payments</h4>
+            <p>100% encrypted checkout protection.</p>
+        </div>
+        <div class="badge-item">
+            <i class="fas fa-headset"></i>
+            <h4>24/7 Support</h4>
+            <p>Dedicated team ready to assist your queries.</p>
+        </div>
+    </section>
 
-    // Load featured products
-    async function loadFeatured() {
-      const products = await loadProducts();
-      const featured = products.filter(p => p.featured).slice(0, 4);
-      
-      const container = document.getElementById('featured-products');
-      featured.forEach(product => {
-        container.appendChild(renderProductCard(product));
-      });
-      
-      initializeCheckout();
-    }
+    <!-- Footer -->
+    <footer>
+        <div class="footer-grid">
+            <div>
+                <h3>ShreeJi Notes</h3>
+                <p>Premium educational notes designed to accelerate your career and grades.</p>
+            </div>
+            <div>
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Features</a></li>
+                    <li><a href="#">Careers</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4>Help</h4>
+                <ul>
+                    <li><a href="#">Customer Support</a></li>
+                    <li><a href="#">Terms & Conditions</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 ShreeJi Notes. All Rights Reserved.</p>
+        </div>
+    </footer>
 
-    loadFeatured();
-  </script>
 </body>
 </html>
